@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#09090b">
+  <title>NEXCREATE — KRYVELL ONE</title>
+  <link rel="stylesheet" href="/nexcreate.css">
+</head>
+<body>
+  <header class="nx-topbar">
+    <a class="nx-back" href="/">‹ KRYVELL ONE</a>
+    <div><span class="nx-eyebrow">ACSTUDIO · NEXCREATE</span><h1>OMNI DRAW BETA</h1></div>
+    <div class="nx-state"><span id="planCount">0 modules</span><span id="saveState">Autosave prêt</span></div>
+  </header>
+
+  <main class="nx-app">
+    <section class="nx-tools" aria-label="Outils de dessin">
+      <div class="tool-row">
+        <button class="tool active" id="brushBtn">Pinceau</button>
+        <button class="tool" id="eraserBtn">Gomme</button>
+        <button class="tool" id="undoBtn">Annuler</button>
+        <button class="tool" id="redoBtn">Rétablir</button>
+      </div>
+      <div class="control-grid">
+        <label>Couleur<input id="colorInput" type="color" value="#e71d48"></label>
+        <label>Taille <output id="sizeOut">18</output><input id="sizeInput" type="range" min="1" max="120" value="18"></label>
+        <label>Opacité <output id="opacityOut">100%</output><input id="opacityInput" type="range" min="5" max="100" value="100"></label>
+        <label>Stabilisation <output id="stabilizerOut">35%</output><input id="stabilizerInput" type="range" min="0" max="85" value="35"></label>
+        <label>Pointe<select id="tipInput"><option value="round">Ronde</option><option value="square">Carrée</option></select></label>
+        <label>Grain<select id="grainInput"><option value="none">Aucun</option><option value="charcoal">Charbon</option><option value="stipple">Stippling</option></select></label>
+      </div>
+      <div class="preset-row"><button data-preset="linework">Linework</button><button data-preset="tribal">Tribal</button><button data-preset="stipple">Stippling</button><button data-preset="marker">Stencil</button></div>
+    </section>
+
+    <section class="nx-workspace">
+      <div class="canvas-toolbar">
+        <select id="canvasPreset"><option value="1600x1600">1600 × 1600</option><option value="1536x2048">1536 × 2048</option><option value="2048x1536">2048 × 1536</option></select>
+        <button id="newCanvasBtn">Nouveau canvas</button>
+        <button id="importBtn">Importer image</button><input id="importInput" type="file" accept="image/*" hidden>
+        <button id="exportBtn" class="accent">Exporter PNG</button>
+      </div>
+      <div class="stage-shell" id="stageShell"><div id="layersHost" class="layers-host"></div></div>
+      <div class="workspace-status"><span id="toolStatus">Pinceau · pression Apple Pencil active</span><span id="docStatus">1600 × 1600</span></div>
+    </section>
+
+    <aside class="nx-side">
+      <section class="panel-card"><div class="panel-title"><h2>Calques</h2><button id="addLayerBtn">+ Ajouter</button></div><div id="layersList"></div></section>
+      <section class="panel-card"><h2>Transformer</h2><div class="button-grid"><button data-transform="flipH">Miroir H</button><button data-transform="flipV">Miroir V</button><button data-transform="rotate">Rotation 90°</button><button id="clearLayerBtn">Effacer calque</button></div></section>
+      <section class="panel-card"><h2>Plan Airtable</h2><p id="planSummary">Chargement…</p><div id="featureStatus"></div></section>
+      <section class="panel-card"><h2>Session</h2><div class="button-grid"><button id="saveNowBtn">Sauvegarder</button><button id="restoreBtn">Restaurer autosave</button><button id="exportSessionBtn">Exporter journal</button></div><p class="muted">Le canvas, les calques et les réglages sont sauvegardés localement. Les fonctions canon/LOCK ne sont jamais modifiées ici.</p></section>
+    </aside>
+  </main>
+  <script src="/nexcreate.js"></script>
+</body>
+</html>
