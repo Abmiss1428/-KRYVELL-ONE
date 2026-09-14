@@ -15,13 +15,14 @@ Source-controlled baseline for the KRYVELL ONE application.
 
 ## Security
 
-Secrets are **not** stored in this repository. Runtime values such as `ACSTUDIO_AIRTABLE_PAT` and `ACSTUDIO_AIRTABLE_BASE_ID` must be configured as server-side environment variables in the deployment platform.
+Secrets are **not** stored in this repository. Runtime values such as `ACSTUDIO_AIRTABLE_PAT`, `ACSTUDIO_AIRTABLE_BASE_ID`, and `KRYVELL_OWNER_KEY` must be configured as server-side environment variables in the deployment platform. Secret values must never be committed to GitHub or returned to the browser.
 
 ## Deployment status
 
 - Vercel project connected to this GitHub repository.
 - Airtable runtime variable names configured in Vercel; secret values are not stored in GitHub.
-- This commit triggers a fresh Vercel deployment so the current serverless runtime can load the configured environment variables.
+- Owner-write authentication is implemented server-side and remains restricted to whitelisted draft actions; canon LOCK records are not exposed to unrestricted writes.
+- This commit triggers a fresh Vercel deployment so the current serverless runtime can load the latest configured environment variables.
 
 ## Status
 
