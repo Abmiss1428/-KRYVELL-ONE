@@ -1,0 +1,1 @@
+export default function handler(req,res){const patPresent=Boolean(process.env.ACSTUDIO_AIRTABLE_PAT);const basePresent=Boolean(process.env.ACSTUDIO_AIRTABLE_BASE_ID);res.setHeader('Cache-Control','no-store');res.status(200).json({ok:patPresent&&basePresent,pat_present:patPresent,base_id_present:basePresent});}
