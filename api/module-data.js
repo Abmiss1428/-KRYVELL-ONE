@@ -55,7 +55,7 @@ const MODULES = {
         }
       },
       {
-        name: 'Character Forge — registre',
+        name: 'ARCHIVES PROTÉGÉES — LECTURE SEULE',
         tableId: 'tblT7zLhkEldVDKkE',
         pageSize: 12,
         sort: { field: 'fldRybsOKTZc5PqFq', direction: 'desc' },
