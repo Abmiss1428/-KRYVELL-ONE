@@ -1,4 +1,4 @@
-/* NYXCORE SMART LOADER v1.1.0 — KRYVELL OS 0.8.0
+/* NYXCORE SMART LOADER v1.2.0 — KRYVELL OS 0.8.5
  * Keeps the OS fast by loading the heavy life/AI modules only when NYXCORE is opened.
  * The home screen gets a lightweight ambient preview at low FPS.
  */
@@ -6,7 +6,7 @@
   'use strict';
   if (window.KryvellNyxLoader) return;
 
-  const VERSION = '0.8.0';
+  const VERSION = '0.8.5';
   const FULL = [
     `/nyxcore-life.js?v=${VERSION}`,
     `/nyxcore-speed.js?v=${VERSION}`,
@@ -96,6 +96,12 @@
       const started=Date.now();
       while(!isReal()&&Date.now()-started<5000) await new Promise(r=>setTimeout(r,40));
       if(!isReal()) throw new Error('nyxcore_not_ready');
+      // One-time recovery from the removed Safe Mode: resume the living engine without
+      // overriding future manual PAUSE choices.
+      const migrationKey='nyxcore:migration:0.8.5-resume';
+      if(!localStorage.getItem(migrationKey)){
+        try{localStorage.removeItem('nyxcore:safeMode');window.KryvellNyxcore?.start?.();localStorage.setItem(migrationKey,'1');}catch{}
+      }
       return window.KryvellNyxcore;
     })().catch(err=>{loading=null;startAmbient();throw err;});
     return loading;
