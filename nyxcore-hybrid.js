@@ -1,4 +1,4 @@
-/* NYXCORE HYBRID GATEWAY v1.1.1
+/* NYXCORE HYBRID GATEWAY v1.1.0
  * Cloud-first narrative brain + PocketPal fallback + multi-device relay + mutation guardrail.
  * Numeric genetics remain local/deterministic; cloud is used for narrative cognition only.
  */
@@ -20,8 +20,7 @@
   localStorage.setItem(ECO_KEY,ecosystemId);
 
   const state={
-    version:'1.1.1',
-    safePaused:false,
+    version:'1.1.0',
     mode:localStorage.getItem(MODE_KEY)||'auto',
     cloudConfigured:null,
     cloudOnline:null,
@@ -110,53 +109,42 @@
   }
 
   class HybridBrainQueue{
-    constructor(){this.heap=new MiniHeap();this.queued=new Set();this.running=0;this.online=null;this.lastError='';this.paused=false;this.controllers=new Set();}
+    constructor(){this.heap=new MiniHeap();this.queued=new Set();this.running=0;this.online=null;this.lastError='';}
     enqueue(agent,priority=0){
-      if(this.paused||state.safePaused) return;
       if(!agent||agent.dead||this.queued.has(agent.id)||this.heap.size>=28) return;
       if(Date.now()<(agent.nextBrainAt||0)) return;
       this.queued.add(agent.id);this.heap.push({agentId:agent.id,priority});this.pump();
     }
     async pump(){
-      if(this.paused||state.safePaused) return;
-      while(!this.paused&&!state.safePaused&&this.running<2&&this.heap.size){
+      while(this.running<2&&this.heap.size){
         const task=this.heap.pop();this.queued.delete(task.agentId);
         const agent=engine.byId.get(task.agentId);if(!agent||agent.dead) continue;
         this.running++;this.run(agent).finally(()=>{this.running--;this.pump();});
       }
     }
-    pause(){this.paused=true;this.heap.items.length=0;this.queued.clear();for(const ctrl of this.controllers){try{ctrl.abort();}catch{}}this.controllers.clear();}
-    resume(){this.paused=false;this.pump();}
     parse(text){
       try{const m=String(text||'').match(/\{[\s\S]*\}/);return m?JSON.parse(m[0]):null;}catch{return null;}
     }
     async cloud(agent){
-      if(this.paused||state.safePaused) return null;
-      const ctrl=new AbortController();this.controllers.add(ctrl);
-      try{
-        const prompt=engine.brainPrompt(agent)+" Return compact JSON only: {\"action\":\"seek_food|wander|mate|rest|explore\",\"dx\":number,\"dy\":number,\"memory\":\"short text\"}.";
-        const r=await fetch('/api/nyx-brain',{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,cache:'no-store',body:JSON.stringify({
-          systemPrompt:`You are the narrative cognition layer of NYXCORE. Agent generation ${agent.generation}. Keep output compact and stable.`,
-          prompt,temperature:0.4,maxOutputTokens:120
-        })});
-        const data=await r.json().catch(()=>null);if(!r.ok||!data?.text) throw new Error(data?.error||`cloud_${r.status}`);
-        if(this.paused||state.safePaused) return null;
-        state.cloudOnline=true;state.lastCloudError='';return this.parse(data.text);
-      }finally{this.controllers.delete(ctrl);}
+      const prompt=engine.brainPrompt(agent)+" Return compact JSON only: {\"action\":\"seek_food|wander|mate|rest|explore\",\"dx\":number,\"dy\":number,\"memory\":\"short text\"}.";
+      const r=await fetch('/api/nyx-brain',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({
+        systemPrompt:`You are the narrative cognition layer of NYXCORE. Agent generation ${agent.generation}. Keep output compact and stable.`,
+        prompt,temperature:0.4,maxOutputTokens:120
+      })});
+      const data=await r.json().catch(()=>null);if(!r.ok||!data?.text) throw new Error(data?.error||`cloud_${r.status}`);
+      state.cloudOnline=true;state.lastCloudError='';return this.parse(data.text);
     }
     async local(agent){
-      if(this.paused||state.safePaused) return null;
-      const ctrl=new AbortController();this.controllers.add(ctrl);const timer=setTimeout(()=>ctrl.abort(),18000);
+      const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),18000);
       try{
         const r=await fetch(api.config.pocketPalUrl,{method:'POST',headers:{'Content-Type':'application/json'},signal:ctrl.signal,cache:'no-store',body:JSON.stringify({
           model:api.config.pocketPalModel,temperature:agent.genes.temperature,max_tokens:100,stream:false,
           messages:[{role:'system',content:'NYXCORE local fallback. Return compact JSON only with action, dx, dy, memory.'},{role:'user',content:engine.brainPrompt(agent)}]
         })});
         if(!r.ok) throw new Error(`local_${r.status}`);const d=await r.json();return this.parse(d?.choices?.[0]?.message?.content||'');
-      }finally{clearTimeout(timer);this.controllers.delete(ctrl);}
+      }finally{clearTimeout(timer);}
     }
     async run(agent){
-      if(this.paused||state.safePaused) return;
       agent.nextBrainAt=Date.now()+12000;
       let parsed=null,provider='math';
       try{
@@ -165,7 +153,6 @@
       if(!parsed&&state.mode!=='cloud'&&state.mode!=='math'){
         try{parsed=await this.local(agent);provider='local';}catch(err){this.lastError=String(err?.message||err);}
       }
-      if(this.paused||state.safePaused) return;
       if(parsed){
         agent.intent=parsed.action||agent.intent;
         if(Number.isFinite(Number(parsed.dx))&&Number.isFinite(Number(parsed.dy))){const dx=Number(parsed.dx),dy=Number(parsed.dy),m=Math.hypot(dx,dy)||1;agent.aiDx=clamp(dx/m,-1,1);agent.aiDy=clamp(dy/m,-1,1);}
@@ -188,7 +175,7 @@
       try{const r=await fetch('/api/nyx-sync',{cache:'no-store'});const d=await r.json();state.syncConfigured=!!d.configured;state.syncOnline=r.ok;return state.syncConfigured;}catch(err){state.syncOnline=false;state.lastSyncError=String(err);return false;}
     }
     async send(eventType,agent){
-      if(state.safePaused||!agent?.id) return;
+      if(!agent?.id) return;
       const payload={agent:this.profile(agent)};
       const evt={ecosystemId,eventType,agentId:agent.id,deviceId,payload};
       try{this.channel?.postMessage({...evt,local:true});}catch{}
@@ -199,7 +186,7 @@
       }catch(err){state.syncOnline=false;state.lastSyncError=String(err?.message||err);}
     }
     async pull(){
-      if(state.safePaused||!navigator.onLine||document.hidden) return;
+      if(!navigator.onLine||document.hidden) return;
       try{
         const r=await fetch('/api/nyx-sync',{method:'POST',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({action:'pull',ecosystemId,deviceId,afterSeq:state.lastCursor,limit:80})});
         const d=await r.json().catch(()=>null);if(!r.ok) throw new Error(d?.error||`sync_${r.status}`);
@@ -208,8 +195,7 @@
         if(Number(d.cursor)>state.lastCursor){state.lastCursor=Number(d.cursor);localStorage.setItem('nyxcore:syncCursor',String(state.lastCursor));}
       }catch(err){state.syncOnline=false;state.lastSyncError=String(err?.message||err);}
     }
-    start(){if(state.safePaused||this.polling)return;this.polling=true;this.health();const tick=async()=>{if(!this.polling||state.safePaused)return;await this.pull();if(this.polling&&!state.safePaused)this.timer=setTimeout(tick,1100);};tick();}
-    stop(){this.polling=false;if(this.timer){clearTimeout(this.timer);this.timer=null;}}
+    start(){if(this.polling)return;this.polling=true;this.health();const tick=async()=>{if(!this.polling)return;await this.pull();this.timer=setTimeout(tick,1100);};tick();}
     async applyEvent(evt,local){
       if(!evt||evt.deviceId===deviceId||evt.source_device_id===deviceId) return;
       const p=appliquerProtectionMutation(evt.payload?.agent||evt.payload||{});if(!p.id) return;
@@ -262,13 +248,12 @@
 
   let narrativeRunning=0;const narrativeQueue=[];
   function scheduleBirthNarrative(child,a,b){
-    if(state.safePaused||state.mode==='local'||state.mode==='math') return;
+    if(state.mode==='local'||state.mode==='math') return;
     if(narrativeQueue.length>80) return;
     narrativeQueue.push({childId:child.id,parentA:a.id,parentB:b.id});pumpNarrative();
   }
   async function pumpNarrative(){
-    if(state.safePaused) return;
-    while(!state.safePaused&&narrativeRunning<2&&narrativeQueue.length){
+    while(narrativeRunning<2&&narrativeQueue.length){
       const job=narrativeQueue.shift();const child=engine.byId.get(job.childId);if(!child||child.dead) continue;
       narrativeRunning++;
       (async()=>{
@@ -304,29 +289,11 @@
     },0);return root;
   };
 
-  function setSafePaused(on){
-    state.safePaused=!!on;
-    if(state.safePaused){
-      hybridQueue.pause();
-      bridge.stop();
-      narrativeQueue.length=0;
-      printWardenLog('SAFE MODE : cerveau, sync et narration suspendus.');
-    }else{
-      hybridQueue.resume();
-      bridge.start();
-      pumpNarrative();
-      printWardenLog('SAFE MODE quitté : passerelles réactivées.');
-    }
-    engine.notifyStats?.();
-    return state.safePaused;
-  }
-
   api.applyMutationGuardrail=appliquerProtectionMutation;
   api.setBrainMode=mode=>{if(['auto','cloud','local','math'].includes(mode)){state.mode=mode;localStorage.setItem(MODE_KEY,mode);}};
-  api.setSafePaused=setSafePaused;
   api.hybridState=()=>({...state});
   api.syncAgent=id=>{const a=engine.byId.get(id);if(a)return bridge.send('transfer',a);};
-  api.version='1.1.1';
+  api.version='1.1.0';
   window.NEON_WARDEN={statut:'INITIALISÉ',architecture:'NYXCORE HYBRID GATEWAY',get modeActuel(){return state.mode;},configurationStable:{temperatureEnLigne:0.4,temperatureHorsLigne:1.2},transfererPenseeAgent:(agent,prompt)=>fetch('/api/nyx-brain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemPrompt:`Entité ${agent?.nom||agent?.id||'NYX'} · mémoire ${agent?.memoire||agent?.memory||''}`,prompt,temperature:0.4})}).then(r=>r.json()).then(d=>d.text),stabiliserEtTransfererAgent:(id)=>api.syncAgent(id)};
 
   (async()=>{
@@ -335,5 +302,5 @@
     await cloudHealth();bridge.start();printWardenLog('Passerelle hybride NYXCORE active : Cloud sécurisé, PocketPal fallback, convergence physique, IndexedDB Vault et synchronisation multi-appareils.');
   })();
 
-  window.__NYXCORE_HYBRID__={state,vault,bridge,queue:hybridQueue,appliquerProtectionMutation,setSafePaused};
+  window.__NYXCORE_HYBRID__={state,vault,bridge,queue:hybridQueue,appliquerProtectionMutation};
 })();
