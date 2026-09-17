@@ -8,6 +8,10 @@ export default async function handler(req,res){
     ok:true,
     data_core:config.userDataBackend,
     supabase_configured:config.supabaseConfigured,
+    supabase_url_configured:config.supabaseUrlConfigured,
+    vercel_oidc_bridge_configured:config.oidcBridgeConfigured,
+    service_role_fallback_configured:config.serviceRoleConfigured,
+    transport:config.dataCoreTransport,
     airtable_control_plane_configured:Boolean(process.env.ACSTUDIO_AIRTABLE_PAT&&process.env.ACSTUDIO_AIRTABLE_BASE_ID),
     roles:{
       user_scale:'Supabase/PostgreSQL',
