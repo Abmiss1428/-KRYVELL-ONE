@@ -5,9 +5,9 @@ const APPS={
   nexarcana:{name:'NEXARCANA',badge:'NXA',desc:'Bibliothèque tarot, méthodes de tirage et atelier.',mode:'iframe',url:'/kryvell-one.html'},
   inkarnyx:{name:'INKARNYX',badge:'INK',desc:'Studio dessin et tatouage : OMNI Draw, Brush Engine, stencil et PHOMEMO.',mode:'iframe',url:'/kryvell-one.html'},
   storyverse:{name:'STORYVERSE',badge:'SV',desc:'Pipeline narratif et production STORYVERSE.',mode:'info'},
-  live:{name:'KRYVELL LIVE',badge:'LIVE',desc:'État Airtable, synchronisation et diagnostics serveur.',mode:'health'},
+  live:{name:'KRYVELL LIVE',badge:'LIVE',desc:'Data Core, Airtable Control Plane, synchronisation et diagnostics serveur.',mode:'health'},
   files:{name:'ASSETS',badge:'FILE',desc:'Point d’entrée vers les fichiers, références et assets ACStudio.',mode:'info'},
-  settings:{name:'PARAMÈTRES',badge:'SYS',desc:'État PWA, réseau, compte KRYVELL, session et version KRYVELL OS.',mode:'settings'}
+  settings:{name:'PARAMÈTRES',badge:'SYS',desc:'État PWA, réseau, compte KRYVELL, DATA CORE, session et version KRYVELL OS.',mode:'settings'}
 };
 
 const boot=document.getElementById('boot');
@@ -22,6 +22,7 @@ const sessionState=document.getElementById('sessionState');
 const installButton=document.getElementById('installButton');
 let deferredInstall=null;
 let lastPhoneStatus={configured:false,user_session:false,user_id:null};
+let lastDataCoreStatus={supabase_configured:false,data_core:'transition-local-session'};
 
 function escapeHtml(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function closePanels(){launcher.hidden=true;control.hidden=true;}
@@ -44,6 +45,11 @@ function phoneLabel(u){
   if(!u?.configured)return 'SMS à configurer';
   if(u.user_session)return 'Connecté';
   return 'Non connecté';
+}
+function dataCoreLabel(d){
+  if(d?.supabase_configured)return 'Supabase/Postgres · LIVE';
+  if(d?.data_core==='unavailable')return 'Indisponible';
+  return 'Scalable core à connecter';
 }
 function bindAccountButtons(){
   const login=document.getElementById('settingsPhoneLogin');
@@ -68,7 +74,7 @@ function openApp(appKey){
   if(app.mode==='settings'){
     const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
     const accountAction=lastPhoneStatus.configured?(lastPhoneStatus.user_session?'<button id="settingsPhoneLogout">Déconnecter KRYVELL ID</button>':'<button id="settingsPhoneLogin">Se connecter par téléphone</button>'):'<button disabled>Connexion SMS à configurer</button>';
-    windowChrome(appKey,`<div class="window-placeholder"><p class="eyebrow">SYSTÈME</p><h2>KRYVELL OS 0.1</h2><p>Couche Web OS / PWA au-dessus de KRYVELL ONE. Les modules existants restent intacts et accessibles.</p><div class="control-card"><span>KRYVELL ID</span><strong>${phoneLabel(lastPhoneStatus)}</strong></div><div class="control-card"><span>Affichage</span><strong>${standalone?'PWA installée':'Navigateur'}</strong></div><div class="control-card"><span>Service worker</span><strong>${'serviceWorker' in navigator?'Compatible':'Non compatible'}</strong></div><div class="control-card"><span>Réseau</span><strong>${navigator.onLine?'En ligne':'Hors ligne'}</strong></div><div class="window-links">${accountAction}<button id="settingsInstall" ${deferredInstall?'':'disabled'}>Installer la PWA</button><a href="/kryvell-one.html">KRYVELL ONE</a></div></div>`);
+    windowChrome(appKey,`<div class="window-placeholder"><p class="eyebrow">SYSTÈME</p><h2>KRYVELL OS 0.1.4</h2><p>Couche Web OS / PWA au-dessus de KRYVELL ONE. Les comptes publics sont déplacés hors Airtable vers un DATA CORE PostgreSQL scalable; Airtable reste le centre de canon et d’opérations.</p><div class="control-card"><span>DATA CORE</span><strong>${dataCoreLabel(lastDataCoreStatus)}</strong></div><div class="control-card"><span>KRYVELL ID</span><strong>${phoneLabel(lastPhoneStatus)}</strong></div><div class="control-card"><span>Affichage</span><strong>${standalone?'PWA installée':'Navigateur'}</strong></div><div class="control-card"><span>Service worker</span><strong>${'serviceWorker' in navigator?'Compatible':'Non compatible'}</strong></div><div class="control-card"><span>Réseau</span><strong>${navigator.onLine?'En ligne':'Hors ligne'}</strong></div><div class="window-links">${accountAction}<button id="settingsInstall" ${deferredInstall?'':'disabled'}>Installer la PWA</button><a href="/kryvell-one.html">KRYVELL ONE</a></div></div>`);
     const b=document.getElementById('settingsInstall');if(b)b.onclick=installPwa;
     bindAccountButtons();
     return;
@@ -78,25 +84,33 @@ function openApp(appKey){
 
 async function healthCheck(updateWindow=false){
   airtableState.textContent='AIRTABLE · TEST';
+  document.getElementById('controlDataCore').textContent='Vérification…';
   document.getElementById('controlAirtable').textContent='Vérification…';
   document.getElementById('controlUser').textContent='Vérification…';
   document.getElementById('controlOwner').textContent='Vérification…';
   try{
-    const [a,o,u]=await Promise.all([
+    const [a,o,u,d]=await Promise.all([
       fetch('/api/airtable-status',{cache:'no-store'}).then(r=>r.json()),
       fetch('/api/owner-action',{cache:'no-store',credentials:'same-origin'}).then(r=>r.json()).catch(()=>({owner_write_configured:false,owner_session:false})),
-      fetch('/api/phone-auth-status',{cache:'no-store',credentials:'same-origin'}).then(r=>r.json()).catch(()=>({configured:false,user_session:false}))
+      fetch('/api/phone-auth-status',{cache:'no-store',credentials:'same-origin'}).then(r=>r.json()).catch(()=>({configured:false,user_session:false})),
+      fetch('/api/data-core-status',{cache:'no-store'}).then(r=>r.json()).catch(()=>({supabase_configured:false,data_core:'unavailable'}))
     ]);
     lastPhoneStatus=u;
+    lastDataCoreStatus=d;
     const connected=Boolean(a.airtable_connected);
-    airtableState.textContent=connected?'AIRTABLE · LIVE':'AIRTABLE · À VÉRIFIER';
-    document.getElementById('controlAirtable').textContent=connected?'Connecté':'À vérifier';
+    airtableState.textContent=connected?'AIRTABLE · CONTROL':'AIRTABLE · À VÉRIFIER';
+    document.getElementById('controlDataCore').textContent=dataCoreLabel(d);
+    document.getElementById('controlAirtable').textContent=connected?'Control Plane connecté':'À vérifier';
     document.getElementById('controlUser').textContent=phoneLabel(u);
     document.getElementById('controlOwner').textContent=o.owner_session?'Propriétaire active':o.owner_write_configured?'Verrouillée':'Non configurée';
     sessionState.textContent=o.owner_session?'PROPRIÉTAIRE':u.user_session?'KRYVELL ID':'STANDARD';
-    if(updateWindow){const e=document.getElementById('liveWindowStatus');if(e)e.innerHTML=`Airtable : <strong>${connected?'CONNECTÉ ✅':'À VÉRIFIER ❌'}</strong><br>KRYVELL ID : <strong>${u.user_session?'CONNECTÉ ✅':u.configured?'NON CONNECTÉ':'SMS À CONFIGURER'}</strong><br>Session propriétaire : <strong>${o.owner_session?'ACTIVE ✅':o.owner_write_configured?'VERROUILLÉE 🔒':'NON CONFIGURÉE'}</strong>`;}
+    if(updateWindow){
+      const e=document.getElementById('liveWindowStatus');
+      if(e)e.innerHTML=`DATA CORE : <strong>${d.supabase_configured?'SUPABASE/POSTGRES LIVE ✅':'À CONNECTER 🟡'}</strong><br>Airtable : <strong>${connected?'CONTROL PLANE CONNECTÉ ✅':'À VÉRIFIER ❌'}</strong><br>KRYVELL ID : <strong>${u.user_session?'CONNECTÉ ✅':u.configured?'NON CONNECTÉ':'SMS À CONFIGURER'}</strong><br>Session propriétaire : <strong>${o.owner_session?'ACTIVE ✅':o.owner_write_configured?'VERROUILLÉE 🔒':'NON CONFIGURÉE'}</strong>`;
+    }
   }catch{
     airtableState.textContent='AIRTABLE · INDISPONIBLE';
+    document.getElementById('controlDataCore').textContent='Indisponible';
     document.getElementById('controlAirtable').textContent='Indisponible';
     document.getElementById('controlUser').textContent='Indisponible';
     document.getElementById('controlOwner').textContent='Indisponible';
