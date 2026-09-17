@@ -1,4 +1,5 @@
 (() => {
+  const VERSION='0.2.1';
   const SERVICES = [
     {id:'airtable',name:'Airtable',group:'CONTROL PLANE',role:'Canon, Mission Control, projets et opérations ACStudio'},
     {id:'supabase',name:'Supabase',group:'DATA CORE',role:'Comptes, données applicatives, sessions et temps réel'},
@@ -29,7 +30,8 @@
   function card(service,status={}){
     const state=status.state||'prepared';
     const mode=status.mode||'adapter';
-    return `<article class="fusion-service" data-state="${esc(state)}"><div class="fusion-service-head"><div><span>${esc(service.group)}</span><strong>${esc(service.name)}</strong></div><b>${esc(stateLabel(state))}</b></div><p>${esc(service.role)}</p><small>${esc(mode)}</small></article>`;
+    const note=status.note||'';
+    return `<article class="fusion-service" data-state="${esc(state)}"><div class="fusion-service-head"><div><span>${esc(service.group)}</span><strong>${esc(service.name)}</strong></div><b>${esc(stateLabel(state))}</b></div><p>${esc(service.role)}</p><small>${esc(mode)}</small>${note?`<small title="${esc(note)}">${esc(note)}</small>`:''}</article>`;
   }
 
   async function getStatus(){
@@ -38,7 +40,7 @@
       if(!r.ok) throw new Error('fusion_status_failed');
       return await r.json();
     }catch{
-      return {ok:false,version:'0.2.0',services:{}};
+      return {ok:false,version:VERSION,services:{}};
     }
   }
 
@@ -48,10 +50,10 @@
     const data=await getStatus();
     const services=data.services||{};
     const liveCount=SERVICES.filter(s=>['live','configured','connected'].includes(services[s.id]?.state)).length;
-    target.innerHTML=`<section class="fusion-hub"><div class="fusion-hero"><p class="eyebrow">KRYVELL FUSION CORE · 0.2.0</p><h2>Un seul noyau. Tous les services.</h2><p>KRYVELL ONE orchestre chaque service sans déplacer le canon ni exposer les secrets. Airtable reste le Control Plane, Supabase le Data Core, GitHub le code et Vercel le runtime.</p><div class="fusion-summary"><strong>${liveCount}/${SERVICES.length}</strong><span>services actifs ou configurés</span><button id="fusionRefresh">Actualiser</button></div></div><div class="fusion-grid">${SERVICES.map(s=>card(s,services[s.id])).join('')}</div><div class="fusion-foot"><strong>Principe d’absorption :</strong> une identité KRYVELL, un registre de services, des adapters serveur isolés, aucune clé dans le frontend.</div></section>`;
+    target.innerHTML=`<section class="fusion-hub"><div class="fusion-hero"><p class="eyebrow">KRYVELL FUSION CORE · ${esc(data.version||VERSION)}</p><h2>Un seul noyau. Tous les services.</h2><p>KRYVELL ONE orchestre chaque service sans déplacer le canon ni exposer les secrets. Airtable reste le Control Plane, Supabase le Data Core, GitHub le code et Vercel le runtime.</p><div class="fusion-summary"><strong>${liveCount}/${SERVICES.length}</strong><span>services live, connectés ou configurés</span><button id="fusionRefresh">Actualiser</button></div></div><div class="fusion-grid">${SERVICES.map(s=>card(s,services[s.id])).join('')}</div><div class="fusion-foot"><strong>Lecture des états :</strong> vert = service réellement détecté; jaune = adapter prêt mais autorisation/API serveur encore absente. Les connexions ChatGPT ne sont jamais copiées silencieusement dans l’application.</div></section>`;
     const refresh=target.querySelector('#fusionRefresh');
     if(refresh) refresh.onclick=()=>render(target);
   }
 
-  window.KryvellFusionCore={version:'0.2.0',services:SERVICES,getStatus,render};
+  window.KryvellFusionCore={version:VERSION,services:SERVICES,getStatus,render};
 })();
