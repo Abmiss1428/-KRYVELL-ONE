@@ -1,0 +1,14 @@
+{
+  "name": "KRYVELL OS — ACStudio",
+  "short_name": "KRYVELL OS",
+  "description": "Couche système maître de KRYVELL ONE et de l’écosystème ACStudio.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#08080a",
+  "theme_color": "#09090b",
+  "lang": "fr-CA",
+  "icons": [
+    {"src":"/kryvell-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

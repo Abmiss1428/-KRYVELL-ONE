@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#09090b" />
+  <title>KRYVELL ONE — ACStudio</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/owner-session.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">BY ACSTUDIO · REDLINE NEXUS</div>
+        <h1>KRYVELL ONE</h1>
+      </div>
+      <div class="status"><span class="dot"></span> NYXCORE EN LIGNE</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <p class="welcome">Bienvenue, Olivia</p>
+        <h2>5 MODULES · 1 SEUL SYSTÈME</h2>
+        <p class="subtitle">ONE CORE. INFINITE WORLDS.</p>
+      </section>
+
+      <section class="grid" aria-label="Modules KRYVELL ONE">
+        <button class="card" data-module="redline">
+          <span class="tag">REDLINE NEXUS</span>
+          <strong>NEXUS CONTROL</strong>
+          <small>Canon, dimensions 1D à 10D, personnages et prompts automatiques</small>
+        </button>
+        <button class="card" data-module="nexarcana">
+          <span class="tag">TAROT IPAD FRANÇAIS</span>
+          <strong>NEXARCANA</strong>
+          <small>Grimoire, tirages, caméra, 78 cartes et atelier</small>
+        </button>
+        <button class="card" data-module="forge">
+          <span class="tag">ACSTUDIO</span>
+          <strong>FORGE DE PERSONNAGES</strong>
+          <small>Création, apparence, verrouillage canon et versions</small>
+        </button>
+        <button class="card" data-module="nexcreate">
+          <span class="tag">ACSTUDIO</span>
+          <strong>NEXCREATE</strong>
+          <small>Dessin, image, concepts et préparation créative</small>
+        </button>
+        <button class="card" data-module="live">
+          <span class="tag">KRYVELL</span>
+          <strong>LIVE CORE</strong>
+          <small>Airtable, synchronisation et état du système</small>
+        </button>
+      </section>
+
+      <section class="panel" id="modulePanel" hidden>
+        <div class="panel-head">
+          <h3 id="moduleTitle">Module</h3>
+          <button id="closePanel" class="ghost">Fermer</button>
+        </div>
+        <p id="moduleText"></p>
+        <div id="moduleActions"></div>
+      </section>
+
+      <section class="nyxcore">
+        <div>
+          <span class="tag">NYXCORE AI</span>
+          <h3>NYXCORE est prêt.</h3>
+        </div>
+        <label for="mission">Mission pour NYXCORE</label>
+        <textarea id="mission" rows="3" placeholder="Exemple : créer une nouvelle scène avec Abmiss et SERRANYX"></textarea>
+        <button id="sendMission" class="primary">ENVOYER À NYXCORE</button>
+        <p id="missionOutput" class="output" aria-live="polite"></p>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <button class="active">ACCUEIL</button>
+      <button data-open="create">CRÉER</button>
+      <button data-open="library">BIBLIOTHÈQUE</button>
+      <button data-open="profile">PROFIL</button>
+    </nav>
+  </div>
+  <script src="/app.js"></script>
+  <script src="/owner-session.js"></script>
+  <script src="/nexcreate-plan.js"></script>
+</body>
+</html>

@@ -3,86 +3,126 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#09090b" />
-  <title>KRYVELL ONE — ACStudio</title>
-  <link rel="stylesheet" href="/styles.css" />
-  <link rel="stylesheet" href="/owner-session.css" />
+  <meta name="theme-color" content="#0a0a0d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="KRYVELL OS" />
+  <title>KRYVELL OS — ACStudio</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/kryvell-icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/kryvell-os.css" />
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">BY ACSTUDIO · REDLINE NEXUS</div>
-        <h1>KRYVELL ONE</h1>
+  <div id="boot" class="boot" aria-live="polite">
+    <div class="boot-mark">K</div>
+    <div class="boot-title">KRYVELL OS</div>
+    <div class="boot-line"><span></span></div>
+    <small>ACSTUDIO SYSTEM LAYER</small>
+  </div>
+
+  <div id="os" class="os-shell" hidden>
+    <header class="os-topbar">
+      <div class="brand-group">
+        <button class="brand-button" id="launcherButton" aria-label="Ouvrir le lanceur">K</button>
+        <div>
+          <div class="eyebrow">ACSTUDIO · REDLINE NEXUS</div>
+          <strong>KRYVELL OS</strong>
+        </div>
       </div>
-      <div class="status"><span class="dot"></span> NYXCORE EN LIGNE</div>
+      <div class="top-status">
+        <span id="networkState" class="status-pill"><i></i> RÉSEAU</span>
+        <span id="airtableState" class="status-pill">AIRTABLE · TEST</span>
+        <button id="clockButton" class="clock" aria-label="Centre système">--:--</button>
+      </div>
     </header>
 
-    <main>
-      <section class="hero">
-        <p class="welcome">Bienvenue, Olivia</p>
-        <h2>5 MODULES · 1 SEUL SYSTÈME</h2>
-        <p class="subtitle">ONE CORE. INFINITE WORLDS.</p>
+    <main class="desktop" id="desktop">
+      <section class="desktop-intro">
+        <p class="eyebrow">COUCHE SYSTÈME MAÎTRE</p>
+        <h1>Bienvenue dans <span>KRYVELL OS</span></h1>
+        <p>KRYVELL ONE reste le hub principal. KRYVELL OS orchestre les apps, l’état système, l’accès PWA, les services et les sessions.</p>
       </section>
 
-      <section class="grid" aria-label="Modules KRYVELL ONE">
-        <button class="card" data-module="redline">
-          <span class="tag">REDLINE NEXUS</span>
-          <strong>NEXUS CONTROL</strong>
-          <small>Canon, dimensions 1D à 10D, personnages et prompts automatiques</small>
+      <section class="desktop-grid" aria-label="Applications KRYVELL OS">
+        <button class="os-app featured" data-app="kryvell-one">
+          <span class="app-icon">K1</span>
+          <span><strong>KRYVELL ONE</strong><small>Hub principal ACStudio</small></span>
         </button>
-        <button class="card" data-module="nexarcana">
-          <span class="tag">TAROT IPAD FRANÇAIS</span>
-          <strong>NEXARCANA</strong>
-          <small>Grimoire, tirages, caméra, 78 cartes et atelier</small>
+        <button class="os-app" data-app="nyxcore">
+          <span class="app-icon">NYX</span>
+          <span><strong>NYXCORE</strong><small>IA & Mission Control</small></span>
         </button>
-        <button class="card" data-module="forge">
-          <span class="tag">ACSTUDIO</span>
-          <strong>FORGE DE PERSONNAGES</strong>
-          <small>Création, apparence, verrouillage canon et versions</small>
+        <button class="os-app" data-app="redline">
+          <span class="app-icon">RNX</span>
+          <span><strong>REDLINE NEXUS</strong><small>Canon & Nexus Control</small></span>
         </button>
-        <button class="card" data-module="nexcreate">
-          <span class="tag">ACSTUDIO</span>
-          <strong>NEXCREATE</strong>
-          <small>Dessin, image, concepts et préparation créative</small>
+        <button class="os-app" data-app="nexarcana">
+          <span class="app-icon">NXA</span>
+          <span><strong>NEXARCANA</strong><small>Tarot & bibliothèque</small></span>
         </button>
-        <button class="card" data-module="live">
-          <span class="tag">KRYVELL</span>
-          <strong>LIVE CORE</strong>
-          <small>Airtable, synchronisation et état du système</small>
+        <button class="os-app" data-app="inkarnyx">
+          <span class="app-icon">INK</span>
+          <span><strong>INKARNYX</strong><small>Dessin, tattoo & stencil</small></span>
+        </button>
+        <button class="os-app" data-app="storyverse">
+          <span class="app-icon">SV</span>
+          <span><strong>STORYVERSE</strong><small>Écriture & pipeline</small></span>
+        </button>
+        <button class="os-app" data-app="live">
+          <span class="app-icon">LIVE</span>
+          <span><strong>KRYVELL LIVE</strong><small>Airtable & synchronisation</small></span>
+        </button>
+        <button class="os-app" data-app="files">
+          <span class="app-icon">FILE</span>
+          <span><strong>ASSETS</strong><small>Fichiers & références</small></span>
+        </button>
+        <button class="os-app" data-app="settings">
+          <span class="app-icon">SYS</span>
+          <span><strong>PARAMÈTRES</strong><small>PWA, sécurité & système</small></span>
         </button>
       </section>
 
-      <section class="panel" id="modulePanel" hidden>
-        <div class="panel-head">
-          <h3 id="moduleTitle">Module</h3>
-          <button id="closePanel" class="ghost">Fermer</button>
-        </div>
-        <p id="moduleText"></p>
-        <div id="moduleActions"></div>
-      </section>
-
-      <section class="nyxcore">
-        <div>
-          <span class="tag">NYXCORE AI</span>
-          <h3>NYXCORE est prêt.</h3>
-        </div>
-        <label for="mission">Mission pour NYXCORE</label>
-        <textarea id="mission" rows="3" placeholder="Exemple : créer une nouvelle scène avec Abmiss et SERRANYX"></textarea>
-        <button id="sendMission" class="primary">ENVOYER À NYXCORE</button>
-        <p id="missionOutput" class="output" aria-live="polite"></p>
+      <section class="system-strip">
+        <div><span>SYSTÈME</span><strong id="systemVersion">KRYVELL OS 0.1</strong></div>
+        <div><span>SESSION</span><strong id="sessionState">STANDARD</strong></div>
+        <div><span>MODE</span><strong id="installState">WEB / PWA</strong></div>
+        <button id="installButton" class="install-button" hidden>INSTALLER KRYVELL OS</button>
       </section>
     </main>
 
-    <nav class="bottom-nav" aria-label="Navigation principale">
-      <button class="active">ACCUEIL</button>
-      <button data-open="create">CRÉER</button>
-      <button data-open="library">BIBLIOTHÈQUE</button>
-      <button data-open="profile">PROFIL</button>
+    <aside id="launcher" class="launcher" hidden>
+      <div class="launcher-head">
+        <div><span class="eyebrow">LANCEUR</span><strong>Applications</strong></div>
+        <button id="closeLauncher" class="icon-button" aria-label="Fermer">×</button>
+      </div>
+      <input id="launcherSearch" class="search" type="search" placeholder="Chercher une app…" autocomplete="off" />
+      <div id="launcherApps" class="launcher-apps"></div>
+    </aside>
+
+    <aside id="controlCenter" class="control-center" hidden>
+      <div class="launcher-head">
+        <div><span class="eyebrow">KRYVELL LIVE</span><strong>Centre système</strong></div>
+        <button id="closeControl" class="icon-button" aria-label="Fermer">×</button>
+      </div>
+      <div class="control-card"><span>Réseau</span><strong id="controlNetwork">—</strong></div>
+      <div class="control-card"><span>Airtable</span><strong id="controlAirtable">—</strong></div>
+      <div class="control-card"><span>Session propriétaire</span><strong id="controlOwner">—</strong></div>
+      <div class="control-card"><span>PWA</span><strong id="controlPwa">—</strong></div>
+      <button id="runHealthCheck" class="primary">VÉRIFIER LE SYSTÈME</button>
+    </aside>
+
+    <section id="windowLayer" class="window-layer" aria-live="polite"></section>
+
+    <nav class="dock" aria-label="Dock KRYVELL OS">
+      <button data-app="kryvell-one"><span>K1</span><small>ONE</small></button>
+      <button data-app="nyxcore"><span>NYX</span><small>AI</small></button>
+      <button data-app="redline"><span>RNX</span><small>NEXUS</small></button>
+      <button data-app="inkarnyx"><span>INK</span><small>CREATE</small></button>
+      <button data-app="live"><span>LIVE</span><small>SYNC</small></button>
     </nav>
   </div>
-  <script src="/app.js"></script>
-  <script src="/owner-session.js"></script>
-  <script src="/nexcreate-plan.js"></script>
+
+  <noscript>KRYVELL OS a besoin de JavaScript pour lancer les applications.</noscript>
+  <script src="/kryvell-os.js"></script>
 </body>
 </html>
