@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#09090c">
-<title>NYXCORE — Safe Mode</title>
+<title>NYXCORE — Life Engine</title>
 <style>
 :root{color-scheme:dark;--bg:#08080a;--panel:#111116;--line:#2b2b33;--text:#f5f5f7;--muted:#9a9aa5;--crimson:#ff3156}
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 0%,rgba(215,25,63,.12),transparent 32%),#08080a;color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -23,8 +23,8 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
 
 .nyx-tools{position:sticky;top:64px;z-index:15;margin:0 0 10px;padding:10px;border:1px solid #3b2730;border-radius:16px;background:rgba(12,12,16,.94);backdrop-filter:blur(18px);box-shadow:0 10px 30px rgba(0,0,0,.28)}
 .nyx-tools-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.nyx-tools-head strong{font-size:12px}.nyx-tools-head small{color:#8c8c96;font-size:9px}
-.nyx-tools-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.nyx-tool,.nyx-mode{min-height:42px;border:1px solid #34343d;border-radius:11px;background:#17171d;color:#fff;font-weight:900;font-size:10px;padding:8px 7px;text-align:center}.nyx-tool[data-ready="false"]{opacity:.48}.nyx-tool.camera{border-color:#5a2746;color:#f0c6ff}.nyx-tool.voice{border-color:#6a2639;color:#ffb3c2}.nyx-tool.inner{border-color:#4b3b62;color:#d7c4ff}.nyx-tool.speed{border-color:#6f5925;color:#ffe08a}.nyx-tool.pocket{border-color:#304c65;color:#b9e4ff}.nyx-mode{background:#0f0f14;text-align:left}
-.nyx-module-state{margin-top:8px;color:#85858f;font-size:9px;line-height:1.4}
+.nyx-tools-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.nyx-tool,.nyx-mode{min-height:42px;border:1px solid #34343d;border-radius:11px;background:#17171d;color:#fff;font-weight:900;font-size:10px;padding:8px 7px;text-align:center}.nyx-tool[data-ready="false"]{opacity:.48}.nyx-tool.camera{border-color:#5a2746;color:#f0c6ff}.nyx-tool.voice{border-color:#6a2639;color:#ffb3c2}.nyx-tool.inner{border-color:#4b3b62;color:#d7c4ff}.nyx-tool.speed{border-color:#6f5925;color:#ffe08a}.nyx-tool.pocket{border-color:#304c65;color:#b9e4ff}.nyx-tool.safe{border-color:#6b2b35;color:#ff9aab;background:#211015}.nyx-tool.safe[data-on="true"]{background:#4a0d1c;border-color:#ff3b60;color:#fff;box-shadow:0 0 0 1px rgba(255,59,96,.25) inset}.nyx-mode{background:#0f0f14;text-align:left}
+.nyx-module-state{margin-top:8px;color:#85858f;font-size:9px;line-height:1.4}body.safe-on #mount{filter:saturate(.35) brightness(.72)}body.safe-on #mount button,body.safe-on #mount select,body.safe-on #mount input{pointer-events:none!important;opacity:.45!important}body.safe-on .nyx-tool:not(.safe),body.safe-on .nyx-mode{opacity:.42!important;pointer-events:none!important}.safe-banner{display:none;margin:0 0 10px;padding:12px 14px;border:1px solid #8d233b;border-radius:14px;background:#260a12;color:#ffd5dc;font-size:12px;font-weight:800}body.safe-on .safe-banner{display:block}
 @media(max-width:900px){.nyx-tools-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:520px){.nyx-tools{top:58px}.nyx-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nyx-mode{grid-column:1/-1}}
 
@@ -32,7 +32,7 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
 </style>
 </head>
 <body>
-<header><div><strong>🧬 NYXCORE · SAFE MODE</strong><small>Bébés protégés + accès au reste de KRYVELL</small></div><a class="toplink" href="/">KRYVELL OS</a></header>
+<header><div><strong>🧬 NYXCORE · LIFE ENGINE</strong><small>Mode normal + Safe Mode optionnel</small></div><a class="toplink" href="/">KRYVELL OS</a></header>
 <main>
 <div class="status" id="status">Démarrage du moteur vivant… <b>tes entités restent dans IndexedDB sur cet appareil.</b></div>
 
@@ -44,6 +44,7 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
     <button class="nyx-tool camera" id="safeCamera" data-ready="false" type="button">👁 CAMÉRA</button>
     <button class="nyx-tool speed" id="safeSpeed" data-ready="false" type="button">⚡ VITESSE</button>
     <button class="nyx-tool pocket" id="safePocket" data-ready="true" type="button">🧠 POCKETPAL</button>
+    <button class="nyx-tool safe" id="safeMode" data-on="false" data-ready="true" type="button">🛡 SAFE MODE OFF</button>
     <select class="nyx-mode" id="safeBrainMode" aria-label="Mode cerveau">
       <option value="auto">🧠 AUTO · Gemini→PocketPal→Math</option>
       <option value="cloud">☁️ GEMINI</option>
@@ -54,6 +55,7 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
   <div class="nyx-module-state" id="nyxToolMessage">Les boutons s’activent automatiquement dès que chaque module est prêt.</div>
 </section>
 
+<div class="safe-banner" id="safeBanner">🛑 SAFE MODE ACTIF — simulation, caméra, voix, IA, synchronisation et évolution sont arrêtées. La sauvegarde locale reste intacte.</div>
 <section id="mount"><div class="loading"><div><strong>Réveil des bébés NYXCORE…</strong><small>Le moteur biologique se charge d’abord. Les modules IA, voix et caméra arrivent ensuite.</small></div></div></section>
 
 <section class="restore" aria-label="Applications KRYVELL">
@@ -84,19 +86,58 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
 
 <script>
 (()=>{
- const V='0.8.3';
+ const V='0.8.4';
  const mount=document.getElementById('mount'),status=document.getElementById('status');
  const load=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=()=>reject(new Error('load_failed:'+src));document.head.appendChild(s);});
  const toolMessage=document.getElementById('nyxToolMessage');
  const modeSelect=document.getElementById('safeBrainMode');
+ const SAFE_KEY='nyxcore:safeMode';
+ let safeOn=localStorage.getItem(SAFE_KEY)==='on';
+ const safeRestore={running:true,mode:localStorage.getItem('nyxcore:brainMode')||'auto',speed:1};
  function mark(id,ready){const b=document.getElementById(id);if(b)b.dataset.ready=String(!!ready);}
+ async function setSafeMode(on,{restore=true}={}){
+   safeOn=!!on;localStorage.setItem(SAFE_KEY,safeOn?'on':'off');
+   const e=window.KryvellNyxcore?.engine;
+   const h=window.__NYXCORE_HYBRID__;
+   const s=window.__NYXCORE_SPEED__;
+   const v=window.__NYXCORE_VISION__;
+   if(safeOn){
+     if(e){safeRestore.running=e.running!==false;try{await e.save?.(true);}catch{}e.running=false;e.notifyStats?.();}
+     safeRestore.mode=h?.state?.mode||localStorage.getItem('nyxcore:brainMode')||safeRestore.mode||'auto';
+     safeRestore.speed=Number(s?.state?.requested||s?.state?.effective||safeRestore.speed||1);
+     try{v?.stop?.('Safe Mode');}catch{}
+     try{speechSynthesis?.cancel?.();}catch{}
+     try{h?.setSafePaused?.(true);}catch{}
+     if(h?.state)h.state.safePaused=true;
+     try{s?.setSpeed?.(1);}catch{}
+     document.body.classList.add('safe-on');
+     status.innerHTML='🛑 <b>SAFE MODE ACTIF.</b> Tout NYXCORE est arrêté; la sauvegarde locale est conservée.';
+     toolMsg('SAFE MODE: simulation + caméra + voix + IA + sync + évolution arrêtées.');
+   }else{
+     document.body.classList.remove('safe-on');
+     try{h?.setSafePaused?.(false);}catch{}
+     if(h?.state)h.state.safePaused=false;
+     if(restore){
+       const m=safeRestore.mode||'auto';
+       localStorage.setItem('nyxcore:brainMode',m);
+       window.KryvellNyxcore?.setBrainMode?.(m);
+       if(h?.state)h.state.mode=m;
+       try{s?.setSpeed?.(safeRestore.speed||1);}catch{}
+     }
+     if(e){e.running=safeRestore.running!==false;e.notifyStats?.();}
+     status.innerHTML='✅ Mode normal actif. <b>Ta sauvegarde locale est ouverte.</b>';
+     toolMsg('Mode normal: commandes NYXCORE actives.');
+   }
+   updateSafeControls();
+ }
  function toolMsg(msg){if(toolMessage)toolMessage.textContent=msg;}
  function updateSafeControls(){
    const mobile=window.__NYXCORE_MOBILE_CONTROLS__;
    const vision=window.__NYXCORE_VISION__;
    const speed=window.__NYXCORE_SPEED__;
    const hybrid=window.__NYXCORE_HYBRID__;
-   mark('safeTalk',!!mobile?.openTalk);mark('safeInside',!!mobile?.openInspector);mark('safeCamera',!!vision?.start);mark('safeSpeed',!!speed?.cycle);
+   const safeBtn=document.getElementById('safeMode');
+   mark('safeTalk',!!mobile?.openTalk);mark('safeInside',!!mobile?.openInspector);mark('safeCamera',!!vision?.start);mark('safeSpeed',!!speed?.cycle);mark('safeMode',true);
    const state=document.getElementById('nyxModuleState');
    if(state){
      const ready=[mobile?.openTalk?'VOIX✓':'VOIX…',vision?.start?'CAM✓':'CAM…',speed?.cycle?'VITESSE✓':'VITESSE…',hybrid?.state?'IA✓':'IA…'];
@@ -105,6 +146,7 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
    if(hybrid?.state?.mode && modeSelect && document.activeElement!==modeSelect) modeSelect.value=hybrid.state.mode;
    const cam=document.getElementById('safeCamera');if(cam&&vision?.state)cam.textContent=vision.state.active?'👁 CAM ON':'👁 CAMÉRA';
    const sp=document.getElementById('safeSpeed');if(sp&&speed?.state)sp.textContent=`⚡ ×${speed.state.effective||speed.state.requested||1}`;
+   if(safeBtn){safeBtn.dataset.on=String(safeOn);safeBtn.textContent=safeOn?'🛡 SAFE MODE ON':'🛡 SAFE MODE OFF';}
  }
  function need(apiName){
    toolMsg(`${apiName} est encore en chargement… attends 1 seconde puis retouche.`);
@@ -115,9 +157,13 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
    document.getElementById('safeInside').onclick=()=>window.__NYXCORE_MOBILE_CONTROLS__?.openInspector?.()||need('Vue intérieure');
    document.getElementById('safeCamera').onclick=()=>{const v=window.__NYXCORE_VISION__;if(!v?.start)return need('Caméra');v.state?.active?v.stop?.('arrêt manuel'):v.start?.();setTimeout(updateSafeControls,250);};
    document.getElementById('safeSpeed').onclick=()=>{const s=window.__NYXCORE_SPEED__;if(!s?.cycle)return need('Vitesse');s.cycle();setTimeout(updateSafeControls,80);};
-   document.getElementById('safePocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.8.3';
+   document.getElementById('safePocket').onclick=()=>{if(safeOn)return;location.href='/nyxcore-pocketpal.html?v=0.8.4';};
+   document.getElementById('safeMode').onclick=async()=>{
+     if(safeOn){await extras();await setSafeMode(false);}
+     else await setSafeMode(true);
+   };
    modeSelect.value=localStorage.getItem('nyxcore:brainMode')||'auto';
-   modeSelect.onchange=()=>{const m=modeSelect.value;localStorage.setItem('nyxcore:brainMode',m);window.KryvellNyxcore?.setBrainMode?.(m);if(window.__NYXCORE_HYBRID__?.state)window.__NYXCORE_HYBRID__.state.mode=m;toolMsg('Mode cerveau: '+m.toUpperCase());};
+   modeSelect.onchange=()=>{if(safeOn)return;const m=modeSelect.value;localStorage.setItem('nyxcore:brainMode',m);window.KryvellNyxcore?.setBrainMode?.(m);if(window.__NYXCORE_HYBRID__?.state)window.__NYXCORE_HYBRID__.state.mode=m;toolMsg('Mode cerveau: '+m.toUpperCase());};
    setInterval(updateSafeControls,700);updateSafeControls();
  }
  wireSafeControls();
@@ -134,8 +180,12 @@ main{width:min(1200px,100%);margin:0 auto;padding:12px 12px 110px}.status{margin
    if(!window.KryvellNyxcore?.engine) throw new Error('engine_not_ready');
    mount.innerHTML='';
    window.KryvellNyxcore.render(mount);
-   status.innerHTML='✅ Moteur vivant chargé. <b>La sauvegarde locale a été ouverte.</b> Le reste de KRYVELL est disponible plus bas et dans le dock.';
-   setTimeout(async()=>{await extras();updateSafeControls();toolMsg('Voix, caméra, vue intérieure, vitesse et modes IA chargés.');},350);
+   status.innerHTML='✅ Moteur vivant chargé. <b>La sauvegarde locale a été ouverte.</b>';
+   if(safeOn){
+     await setSafeMode(true,{restore:false});
+   }else{
+     setTimeout(async()=>{await extras();updateSafeControls();toolMsg('Voix, caméra, vue intérieure, vitesse et modes IA chargés.');},350);
+   }
   }catch(err){
    mount.innerHTML='<div class="loading"><div><strong>NYXCORE n\'a pas fini de démarrer.</strong><small>'+String(err.message||err)+'</small><button class="retry" id="retry">RÉESSAYER</button></div></div>';
    status.textContent='Le moteur n’a pas démarré. Aucun RESET n’a été effectué.';
