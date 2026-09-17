@@ -10,7 +10,8 @@
   <title>KRYVELL OS — ACStudio</title>
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/kryvell-icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="/kryvell-os.css?v=0.1.2" />
+  <link rel="stylesheet" href="/kryvell-os.css?v=0.1.3" />
+  <link rel="stylesheet" href="/phone-auth.css?v=0.1.3" />
 </head>
 <body>
   <div id="boot" class="boot" aria-hidden="true" hidden style="display:none!important">
@@ -106,6 +107,7 @@
       </div>
       <div class="control-card"><span>Réseau</span><strong id="controlNetwork">—</strong></div>
       <div class="control-card"><span>Airtable</span><strong id="controlAirtable">—</strong></div>
+      <div class="control-card"><span>KRYVELL ID</span><strong id="controlUser">—</strong></div>
       <div class="control-card"><span>Session propriétaire</span><strong id="controlOwner">—</strong></div>
       <div class="control-card"><span>PWA</span><strong id="controlPwa">—</strong></div>
       <button id="runHealthCheck" class="primary">VÉRIFIER LE SYSTÈME</button>
@@ -123,7 +125,8 @@
   </div>
 
   <noscript>KRYVELL OS a besoin de JavaScript pour lancer les applications.</noscript>
-  <script src="/boot-fallback.js?v=0.1.2"></script>
-  <script src="/kryvell-os.js?v=0.1.2"></script>
+  <script src="/boot-fallback.js?v=0.1.3"></script>
+  <script src="/phone-auth.js?v=0.1.3"></script>
+  <script src="/kryvell-os.js?v=0.1.3"></script>
 </body>
 </html>
