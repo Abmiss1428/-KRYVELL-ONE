@@ -1,0 +1,21 @@
+:root{--kryvell-auth-bg:#09090c;--kryvell-auth-panel:#121217;--kryvell-auth-line:#2a2a32;--kryvell-auth-text:#f5f5f7;--kryvell-auth-muted:#a5a5ae;--kryvell-auth-crimson:#d7193f;--kryvell-auth-crimson-2:#8f102a;--kryvell-auth-ok:#55d98b}
+.kryvell-auth-overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:24px;background:rgba(5,5,8,.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;color:var(--kryvell-auth-text)}
+.kryvell-auth-card{width:min(430px,100%);background:linear-gradient(180deg,rgba(24,24,31,.98),rgba(13,13,18,.98));border:1px solid var(--kryvell-auth-line);border-radius:28px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.kryvell-auth-mark{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;margin-bottom:18px;background:linear-gradient(145deg,var(--kryvell-auth-crimson),var(--kryvell-auth-crimson-2));font-weight:900;font-size:22px;letter-spacing:.04em;box-shadow:0 0 28px rgba(215,25,63,.2)}
+.kryvell-auth-eyebrow{margin:0 0 8px;color:#ef6d84;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.kryvell-auth-card h1{margin:0 0 10px;font-size:30px;line-height:1.05}
+.kryvell-auth-copy{margin:0 0 22px;color:var(--kryvell-auth-muted);font-size:15px;line-height:1.45}
+.kryvell-auth-grid{display:grid;grid-template-columns:92px 1fr;gap:10px}
+.kryvell-auth-label{display:block;margin:14px 0 7px;color:#d5d5da;font-size:12px;font-weight:750;letter-spacing:.04em}
+.kryvell-auth-input{width:100%;box-sizing:border-box;border:1px solid var(--kryvell-auth-line);border-radius:14px;background:#0b0b10;color:var(--kryvell-auth-text);padding:15px 14px;font:inherit;font-size:16px;outline:none;transition:border-color .18s,box-shadow .18s}
+.kryvell-auth-input:focus{border-color:var(--kryvell-auth-crimson);box-shadow:0 0 0 3px rgba(215,25,63,.13)}
+.kryvell-auth-code{font-size:28px;letter-spacing:.22em;text-align:center;font-weight:800}
+.kryvell-auth-primary,.kryvell-auth-secondary{width:100%;border:0;border-radius:14px;padding:14px 16px;margin-top:14px;font:inherit;font-weight:850;cursor:pointer}
+.kryvell-auth-primary{background:linear-gradient(145deg,var(--kryvell-auth-crimson),#b81233);color:white}
+.kryvell-auth-primary:disabled{opacity:.5;cursor:default}
+.kryvell-auth-secondary{background:#202028;color:#ededf2}
+.kryvell-auth-message{min-height:22px;margin:12px 0 0;font-size:13px;line-height:1.4;color:#ff92a5}
+.kryvell-auth-message.ok{color:var(--kryvell-auth-ok)}
+.kryvell-auth-foot{margin:18px 0 0;color:#74747e;font-size:11px;line-height:1.45;text-align:center}
+.kryvell-auth-hidden{display:none!important}
+@media(max-width:520px){.kryvell-auth-overlay{padding:14px}.kryvell-auth-card{padding:22px;border-radius:22px}.kryvell-auth-card h1{font-size:26px}.kryvell-auth-grid{grid-template-columns:82px 1fr}}
