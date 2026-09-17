@@ -7,7 +7,7 @@ const APPS={
   storyverse:{name:'STORYVERSE',badge:'SV',desc:'Pipeline narratif et production STORYVERSE.',mode:'info'},
   live:{name:'KRYVELL LIVE',badge:'LIVE',desc:'État Airtable, synchronisation et diagnostics serveur.',mode:'health'},
   files:{name:'ASSETS',badge:'FILE',desc:'Point d’entrée vers les fichiers, références et assets ACStudio.',mode:'info'},
-  settings:{name:'PARAMÈTRES',badge:'SYS',desc:'État PWA, réseau, session et version KRYVELL OS.',mode:'settings'}
+  settings:{name:'PARAMÈTRES',badge:'SYS',desc:'État PWA, réseau, compte KRYVELL, session et version KRYVELL OS.',mode:'settings'}
 };
 
 const boot=document.getElementById('boot');
@@ -21,6 +21,7 @@ const airtableState=document.getElementById('airtableState');
 const sessionState=document.getElementById('sessionState');
 const installButton=document.getElementById('installButton');
 let deferredInstall=null;
+let lastPhoneStatus={configured:false,user_session:false,user_id:null};
 
 function escapeHtml(v=''){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function closePanels(){launcher.hidden=true;control.hidden=true;}
@@ -39,6 +40,18 @@ function windowChrome(appKey,body){
   windowLayer.querySelector('[data-home]').onclick=()=>windowLayer.innerHTML='';
 }
 
+function phoneLabel(u){
+  if(!u?.configured)return 'SMS à configurer';
+  if(u.user_session)return 'Connecté';
+  return 'Non connecté';
+}
+function bindAccountButtons(){
+  const login=document.getElementById('settingsPhoneLogin');
+  const logout=document.getElementById('settingsPhoneLogout');
+  if(login)login.onclick=()=>window.KryvellPhoneAuth?.open();
+  if(logout)logout.onclick=async()=>{await window.KryvellPhoneAuth?.logout();lastPhoneStatus={configured:true,user_session:false,user_id:null};healthCheck();openApp('settings');};
+}
+
 function openApp(appKey){
   const app=APPS[appKey];if(!app)return;
   closePanels();
@@ -54,8 +67,10 @@ function openApp(appKey){
   }
   if(app.mode==='settings'){
     const standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
-    windowChrome(appKey,`<div class="window-placeholder"><p class="eyebrow">SYSTÈME</p><h2>KRYVELL OS 0.1</h2><p>Couche Web OS / PWA au-dessus de KRYVELL ONE. Les modules existants restent intacts et accessibles.</p><div class="control-card"><span>Affichage</span><strong>${standalone?'PWA installée':'Navigateur'}</strong></div><div class="control-card"><span>Service worker</span><strong>${'serviceWorker' in navigator?'Compatible':'Non compatible'}</strong></div><div class="control-card"><span>Réseau</span><strong>${navigator.onLine?'En ligne':'Hors ligne'}</strong></div><div class="window-links"><button id="settingsInstall" ${deferredInstall?'':'disabled'}>Installer la PWA</button><a href="/kryvell-one.html">KRYVELL ONE</a></div></div>`);
+    const accountAction=lastPhoneStatus.configured?(lastPhoneStatus.user_session?'<button id="settingsPhoneLogout">Déconnecter KRYVELL ID</button>':'<button id="settingsPhoneLogin">Se connecter par téléphone</button>'):'<button disabled>Connexion SMS à configurer</button>';
+    windowChrome(appKey,`<div class="window-placeholder"><p class="eyebrow">SYSTÈME</p><h2>KRYVELL OS 0.1</h2><p>Couche Web OS / PWA au-dessus de KRYVELL ONE. Les modules existants restent intacts et accessibles.</p><div class="control-card"><span>KRYVELL ID</span><strong>${phoneLabel(lastPhoneStatus)}</strong></div><div class="control-card"><span>Affichage</span><strong>${standalone?'PWA installée':'Navigateur'}</strong></div><div class="control-card"><span>Service worker</span><strong>${'serviceWorker' in navigator?'Compatible':'Non compatible'}</strong></div><div class="control-card"><span>Réseau</span><strong>${navigator.onLine?'En ligne':'Hors ligne'}</strong></div><div class="window-links">${accountAction}<button id="settingsInstall" ${deferredInstall?'':'disabled'}>Installer la PWA</button><a href="/kryvell-one.html">KRYVELL ONE</a></div></div>`);
     const b=document.getElementById('settingsInstall');if(b)b.onclick=installPwa;
+    bindAccountButtons();
     return;
   }
   windowChrome(appKey,`<div class="window-placeholder"><p class="eyebrow">APP KRYVELL OS</p><h2>${escapeHtml(app.name)}</h2><p>${escapeHtml(app.desc)}</p><p>Cette app est enregistrée dans la couche système. Son interface dédiée sera branchée ici sans retirer les données ni les modules existants.</p><div class="window-links"><a href="/kryvell-one.html">Ouvrir le hub KRYVELL ONE</a></div></div>`);
@@ -64,21 +79,26 @@ function openApp(appKey){
 async function healthCheck(updateWindow=false){
   airtableState.textContent='AIRTABLE · TEST';
   document.getElementById('controlAirtable').textContent='Vérification…';
+  document.getElementById('controlUser').textContent='Vérification…';
   document.getElementById('controlOwner').textContent='Vérification…';
   try{
-    const [a,o]=await Promise.all([
+    const [a,o,u]=await Promise.all([
       fetch('/api/airtable-status',{cache:'no-store'}).then(r=>r.json()),
-      fetch('/api/owner-action',{cache:'no-store',credentials:'same-origin'}).then(r=>r.json()).catch(()=>({owner_write_configured:false,owner_session:false}))
+      fetch('/api/owner-action',{cache:'no-store',credentials:'same-origin'}).then(r=>r.json()).catch(()=>({owner_write_configured:false,owner_session:false})),
+      fetch('/api/phone-auth-status',{cache:'no-store',credentials:'same-origin'}).then(r=>r.json()).catch(()=>({configured:false,user_session:false}))
     ]);
+    lastPhoneStatus=u;
     const connected=Boolean(a.airtable_connected);
     airtableState.textContent=connected?'AIRTABLE · LIVE':'AIRTABLE · À VÉRIFIER';
     document.getElementById('controlAirtable').textContent=connected?'Connecté':'À vérifier';
+    document.getElementById('controlUser').textContent=phoneLabel(u);
     document.getElementById('controlOwner').textContent=o.owner_session?'Propriétaire active':o.owner_write_configured?'Verrouillée':'Non configurée';
-    sessionState.textContent=o.owner_session?'PROPRIÉTAIRE':'STANDARD';
-    if(updateWindow){const e=document.getElementById('liveWindowStatus');if(e)e.innerHTML=`Airtable : <strong>${connected?'CONNECTÉ ✅':'À VÉRIFIER ❌'}</strong><br>Session propriétaire : <strong>${o.owner_session?'ACTIVE ✅':o.owner_write_configured?'VERROUILLÉE 🔒':'NON CONFIGURÉE'}</strong>`;}
+    sessionState.textContent=o.owner_session?'PROPRIÉTAIRE':u.user_session?'KRYVELL ID':'STANDARD';
+    if(updateWindow){const e=document.getElementById('liveWindowStatus');if(e)e.innerHTML=`Airtable : <strong>${connected?'CONNECTÉ ✅':'À VÉRIFIER ❌'}</strong><br>KRYVELL ID : <strong>${u.user_session?'CONNECTÉ ✅':u.configured?'NON CONNECTÉ':'SMS À CONFIGURER'}</strong><br>Session propriétaire : <strong>${o.owner_session?'ACTIVE ✅':o.owner_write_configured?'VERROUILLÉE 🔒':'NON CONFIGURÉE'}</strong>`;}
   }catch{
     airtableState.textContent='AIRTABLE · INDISPONIBLE';
     document.getElementById('controlAirtable').textContent='Indisponible';
+    document.getElementById('controlUser').textContent='Indisponible';
     document.getElementById('controlOwner').textContent='Indisponible';
     if(updateWindow){const e=document.getElementById('liveWindowStatus');if(e)e.textContent='Le diagnostic serveur ne répond pas.';}
   }
@@ -89,6 +109,7 @@ async function installPwa(){if(!deferredInstall)return;deferredInstall.prompt();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstall=e;installButton.hidden=false;});
 window.addEventListener('appinstalled',()=>{deferredInstall=null;installButton.hidden=true;document.getElementById('installState').textContent='PWA INSTALLÉE';document.getElementById('controlPwa').textContent='Installée';});
 window.addEventListener('online',updateNetwork);window.addEventListener('offline',updateNetwork);
+window.addEventListener('kryvell:phone-session',e=>{const s=e.detail||{};lastPhoneStatus={configured:Boolean(s.configured),user_session:Boolean(s.session),user_id:s.userId||null};const el=document.getElementById('controlUser');if(el)el.textContent=phoneLabel(lastPhoneStatus);if(!document.getElementById('controlOwner')?.textContent?.includes('Propriétaire'))sessionState.textContent=s.session?'KRYVELL ID':'STANDARD';});
 
 document.getElementById('launcherButton').onclick=()=>{control.hidden=true;launcher.hidden=!launcher.hidden;if(!launcher.hidden)launcherSearch.focus();};
 document.getElementById('closeLauncher').onclick=()=>launcher.hidden=true;
