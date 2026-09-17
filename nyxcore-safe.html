@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#09090c">
+<title>NYXCORE — Safe Mode</title>
+<style>
+:root{color-scheme:dark;--bg:#08080a;--panel:#111116;--line:#2b2b33;--text:#f5f5f7;--muted:#9a9aa5;--crimson:#ff3156}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 0%,rgba(215,25,63,.12),transparent 32%),#08080a;color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:10;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);background:rgba(8,8,10,.92);backdrop-filter:blur(18px)}
+header strong{display:block}header small{display:block;color:var(--muted);margin-top:3px}a{color:white;text-decoration:none;border:1px solid #4a2530;border-radius:10px;padding:8px 10px;background:#1b1014;font-weight:800;font-size:12px}
+main{width:min(1200px,100%);margin:0 auto;padding:12px}.status{margin:0 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#111116;color:#c8c8cf;font-size:12px}.status b{color:#ff718d}
+#mount{min-height:68vh;border:1px solid #2a2025;border-radius:18px;overflow:hidden;background:#09090c;position:relative}
+.loading{min-height:68vh;display:grid;place-items:center;text-align:center;padding:26px;color:#d8d8dd}.loading strong{display:block;font-size:18px}.loading small{display:block;color:#8f8f99;margin-top:7px;line-height:1.5}
+.retry{margin-top:12px;border:1px solid #7b1d35;background:#4b0e1f;color:#fff;border-radius:11px;padding:10px 13px;font-weight:900}
+</style>
+</head>
+<body>
+<header><div><strong>🧬 NYXCORE · SAFE MODE</strong><small>Accès direct à la population locale sauvegardée</small></div><a href="/">← KRYVELL OS</a></header>
+<main>
+<div class="status" id="status">Démarrage du moteur vivant… <b>tes entités restent dans IndexedDB sur cet appareil.</b></div>
+<section id="mount"><div class="loading"><div><strong>Réveil des bébés NYXCORE…</strong><small>Le moteur biologique se charge d’abord. Les modules IA, voix et caméra arrivent ensuite.</small></div></div></section>
+</main>
+<script>
+(()=>{
+ const mount=document.getElementById('mount'),status=document.getElementById('status');
+ const load=src=>new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src;s.async=false;s.onload=resolve;s.onerror=()=>reject(new Error('load_failed:'+src));document.head.appendChild(s);});
+ async function extras(){
+  const list=['/nyxcore-speed.js?v=0.8.0','/nyxcore-thermal.js?v=0.8.0','/nyxcore-visuals.js?v=0.8.0','/nyxcore-hybrid.js?v=0.8.0','/nyxcore-vision.js?v=0.8.0','/nyxcore-voice.js?v=0.8.0','/nyxcore-mobile-controls.js?v=0.8.0'];
+  for(const src of list){try{await load(src);}catch(e){console.warn(e);}}
+ }
+ async function boot(){
+  status.innerHTML='Chargement du moteur vivant…';
+  try{
+   await load('/nyxcore-life.js?v=0.8.0');
+   const started=Date.now();
+   while(!window.KryvellNyxcore?.engine && Date.now()-started<7000) await new Promise(r=>setTimeout(r,80));
+   if(!window.KryvellNyxcore?.engine) throw new Error('engine_not_ready');
+   mount.innerHTML='';
+   window.KryvellNyxcore.render(mount);
+   status.innerHTML='✅ Moteur vivant chargé. <b>La sauvegarde locale a été ouverte.</b> Les modules secondaires se chargent doucement.';
+   setTimeout(extras,350);
+  }catch(err){
+   mount.innerHTML='<div class="loading"><div><strong>NYXCORE n\'a pas fini de démarrer.</strong><small>'+String(err.message||err)+'</small><button class="retry" id="retry">RÉESSAYER</button></div></div>';
+   status.textContent='Le moteur n’a pas démarré. Aucun RESET n’a été effectué.';
+   document.getElementById('retry').onclick=()=>location.reload();
+  }
+ }
+ boot();
+})();
+</script>
+</body>
+</html>
