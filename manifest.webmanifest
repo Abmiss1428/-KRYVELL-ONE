@@ -2,6 +2,7 @@
   "name": "KRYVELL OS — ACStudio",
   "short_name": "KRYVELL OS",
   "description": "Couche système maître de KRYVELL ONE et de l’écosystème ACStudio.",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
