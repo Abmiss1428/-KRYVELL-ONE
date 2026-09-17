@@ -9,42 +9,54 @@
   <style>
     :root{color-scheme:dark;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;background:#08080b;color:#f7f7f8}
     *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% 0,rgba(166,15,48,.14),transparent 38%),#08080b}
-    header{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(12px,env(safe-area-inset-top)) 14px 12px;background:rgba(10,10,14,.9);backdrop-filter:blur(16px);border-bottom:1px solid #2a2025}
+    header{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:max(12px,env(safe-area-inset-top)) 14px 12px;background:rgba(10,10,14,.94);backdrop-filter:blur(16px);border-bottom:1px solid #2a2025}
     header div span{display:block;font:800 9px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em;color:#ba6578;margin-bottom:3px}header strong{font-size:15px}
     header a{color:#fff;text-decoration:none;border:1px solid #43242d;background:#1a1014;border-radius:11px;padding:9px 11px;font-size:12px;font-weight:800}
     .hero{padding:14px}.hero h1{font-size:22px;margin:4px 0}.hero p{color:#aaa2a6;line-height:1.5;margin:0;font-size:12px}.bridge{margin-top:10px;padding:10px 12px;border:1px solid #41242d;border-radius:14px;background:#130d10}.bridge strong{color:#ff526f}.bridge code{font-size:11px;color:#d4cdd0;word-break:break-all}
-    #nyxPocketMount{height:calc(100vh - 170px);min-height:620px;margin:0 10px 14px;border:1px solid #2d2428;border-radius:20px;overflow:hidden;background:#09090c;box-shadow:0 24px 80px rgba(0,0,0,.35)}
-    @media(max-width:760px){#nyxPocketMount{height:auto;min-height:760px}.hero h1{font-size:19px}}
+    .load-card{margin:0 10px 14px;padding:18px;border:1px solid #34272c;border-radius:20px;background:linear-gradient(180deg,#111015,#0b0b0f);box-shadow:0 20px 60px rgba(0,0,0,.28)}
+    .load-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.load-title{font-size:14px;font-weight:900}.load-status{margin-top:7px;color:#aaa2a6;font-size:12px;line-height:1.45}.meter{height:5px;margin-top:13px;border-radius:99px;background:#21171b;overflow:hidden}.meter span{display:block;height:100%;width:18%;background:#d7193f;border-radius:inherit;animation:move 1.15s ease-in-out infinite}@keyframes move{0%{transform:translateX(-120%)}100%{transform:translateX(620%)}}
+    button{border:1px solid #54303a;background:#241218;color:white;border-radius:11px;padding:9px 11px;font-weight:800}.ok{color:#55d98b}.bad{color:#ff7890}
+    #nyxPocketMount{min-height:620px;margin:0 10px 14px;border:1px solid #2d2428;border-radius:20px;overflow:hidden;background:#09090c;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+    #nyxPocketMount:empty{display:none}
+    @media(max-width:760px){#nyxPocketMount{min-height:760px}.hero h1{font-size:19px}}
   </style>
 </head>
 <body>
   <header><div><span>NYXCORE · LOCAL BRAIN COMPANION</span><strong>PocketPal Bridge</strong></div><a href="/">← KRYVELL ONE</a></header>
   <section class="hero">
     <h1>Le même écosystème, branché sur PocketPal</h1>
-    <p>Cette vue partage la persistance IndexedDB de KRYVELL sur cet appareil. PocketPal reste le moteur LLM local; cette page est la couche visuelle vivante qui lui parle par API locale.</p>
+    <p>La page s’affiche d’abord en mode léger. Le moteur vivant se charge ensuite en arrière-plan pour éviter l’écran noir sur iPad.</p>
     <div class="bridge"><strong>LOCAL:</strong> <code>http://127.0.0.1:5001/v1/chat/completions</code> · modèle <code>llama-3.2</code></div>
   </section>
+  <section class="load-card" id="loadCard">
+    <div class="load-row"><div><div class="load-title">NYXCORE · démarrage progressif</div><div class="load-status" id="loadStatus">Interface prête. Chargement du moteur…</div></div><button id="retryLoad" hidden>RÉESSAYER</button></div>
+    <div class="meter" id="loadMeter"><span></span></div>
+  </section>
   <main id="nyxPocketMount"></main>
-  <script src="/nyxcore-life.js?v=0.7.0"></script>
-  <script src="/nyxcore-speed.js?v=0.7.0"></script>
-  <script src="/nyxcore-visuals.js?v=0.7.0"></script>
-  <script src="/nyxcore-hybrid.js?v=0.7.0"></script>
-  <script src="/nyxcore-voice.js?v=0.7.0"></script>
-  <script src="/nyxcore-mobile-controls.js?v=0.7.0"></script>
+  <script src="/nyxcore-loader.js?v=0.7.2"></script>
   <script>
     (()=>{
-      let tries=0;
-      const t=setInterval(()=>{
-        tries++;
-        const api=window.KryvellNyxcore;
-        if(api?.render){
-          clearInterval(t);
+      const status=document.getElementById('loadStatus');
+      const meter=document.getElementById('loadMeter');
+      const retry=document.getElementById('retryLoad');
+      const mount=document.getElementById('nyxPocketMount');
+      let started=false;
+      async function boot(){
+        if(started)return;started=true;retry.hidden=true;meter.hidden=false;status.className='load-status';status.textContent='Chargement du moteur vivant…';
+        try{
+          await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+          const api=await window.KryvellNyxLoader.ensureFull();
           api.setPocketPal?.('http://127.0.0.1:5001/v1/chat/completions','llama-3.2');
-          api.render(document.getElementById('nyxPocketMount'));
-          return;
+          api.render(mount);
+          status.textContent='NYXCORE prêt · PocketPal local configuré.';status.className='load-status ok';meter.hidden=true;
+          setTimeout(()=>document.getElementById('loadCard')?.remove(),900);
+        }catch(e){
+          started=false;meter.hidden=true;retry.hidden=false;status.className='load-status bad';status.textContent='Le moteur n’a pas fini de charger. Appuie sur RÉESSAYER.';
+          console.error('[NYXCORE PocketPal]',e);
         }
-        if(tries>200)clearInterval(t);
-      },50);
+      }
+      retry.onclick=boot;
+      setTimeout(boot,180);
     })();
   </script>
 </body>
