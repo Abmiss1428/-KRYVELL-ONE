@@ -10,8 +10,8 @@
   <title>KRYVELL OS — ACStudio</title>
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/kryvell-icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="/kryvell-os.css?v=0.1.3" />
-  <link rel="stylesheet" href="/phone-auth.css?v=0.1.3" />
+  <link rel="stylesheet" href="/kryvell-os.css?v=0.1.4" />
+  <link rel="stylesheet" href="/phone-auth.css?v=0.1.4" />
 </head>
 <body>
   <div id="boot" class="boot" aria-hidden="true" hidden style="display:none!important">
@@ -45,46 +45,19 @@
       </section>
 
       <section class="desktop-grid" aria-label="Applications KRYVELL OS">
-        <button class="os-app featured" data-app="kryvell-one">
-          <span class="app-icon">K1</span>
-          <span><strong>KRYVELL ONE</strong><small>Hub principal ACStudio</small></span>
-        </button>
-        <button class="os-app" data-app="nyxcore">
-          <span class="app-icon">NYX</span>
-          <span><strong>NYXCORE</strong><small>IA & Mission Control</small></span>
-        </button>
-        <button class="os-app" data-app="redline">
-          <span class="app-icon">RNX</span>
-          <span><strong>REDLINE NEXUS</strong><small>Canon & Nexus Control</small></span>
-        </button>
-        <button class="os-app" data-app="nexarcana">
-          <span class="app-icon">NXA</span>
-          <span><strong>NEXARCANA</strong><small>Tarot & bibliothèque</small></span>
-        </button>
-        <button class="os-app" data-app="inkarnyx">
-          <span class="app-icon">INK</span>
-          <span><strong>INKARNYX</strong><small>Dessin, tattoo & stencil</small></span>
-        </button>
-        <button class="os-app" data-app="storyverse">
-          <span class="app-icon">SV</span>
-          <span><strong>STORYVERSE</strong><small>Écriture & pipeline</small></span>
-        </button>
-        <button class="os-app" data-app="live">
-          <span class="app-icon">LIVE</span>
-          <span><strong>KRYVELL LIVE</strong><small>Airtable & synchronisation</small></span>
-        </button>
-        <button class="os-app" data-app="files">
-          <span class="app-icon">FILE</span>
-          <span><strong>ASSETS</strong><small>Fichiers & références</small></span>
-        </button>
-        <button class="os-app" data-app="settings">
-          <span class="app-icon">SYS</span>
-          <span><strong>PARAMÈTRES</strong><small>PWA, sécurité & système</small></span>
-        </button>
+        <button class="os-app featured" data-app="kryvell-one"><span class="app-icon">K1</span><span><strong>KRYVELL ONE</strong><small>Hub principal ACStudio</small></span></button>
+        <button class="os-app" data-app="nyxcore"><span class="app-icon">NYX</span><span><strong>NYXCORE</strong><small>IA & Mission Control</small></span></button>
+        <button class="os-app" data-app="redline"><span class="app-icon">RNX</span><span><strong>REDLINE NEXUS</strong><small>Canon & Nexus Control</small></span></button>
+        <button class="os-app" data-app="nexarcana"><span class="app-icon">NXA</span><span><strong>NEXARCANA</strong><small>Tarot & bibliothèque</small></span></button>
+        <button class="os-app" data-app="inkarnyx"><span class="app-icon">INK</span><span><strong>INKARNYX</strong><small>Dessin, tattoo & stencil</small></span></button>
+        <button class="os-app" data-app="storyverse"><span class="app-icon">SV</span><span><strong>STORYVERSE</strong><small>Écriture & pipeline</small></span></button>
+        <button class="os-app" data-app="live"><span class="app-icon">LIVE</span><span><strong>KRYVELL LIVE</strong><small>Données & synchronisation</small></span></button>
+        <button class="os-app" data-app="files"><span class="app-icon">FILE</span><span><strong>ASSETS</strong><small>Fichiers & références</small></span></button>
+        <button class="os-app" data-app="settings"><span class="app-icon">SYS</span><span><strong>PARAMÈTRES</strong><small>PWA, sécurité & système</small></span></button>
       </section>
 
       <section class="system-strip">
-        <div><span>SYSTÈME</span><strong id="systemVersion">KRYVELL OS 0.1</strong></div>
+        <div><span>SYSTÈME</span><strong id="systemVersion">KRYVELL OS 0.1.4</strong></div>
         <div><span>SESSION</span><strong id="sessionState">STANDARD</strong></div>
         <div><span>MODE</span><strong id="installState">WEB / PWA</strong></div>
         <button id="installButton" class="install-button" hidden>INSTALLER KRYVELL OS</button>
@@ -92,21 +65,16 @@
     </main>
 
     <aside id="launcher" class="launcher" hidden>
-      <div class="launcher-head">
-        <div><span class="eyebrow">LANCEUR</span><strong>Applications</strong></div>
-        <button id="closeLauncher" class="icon-button" aria-label="Fermer">×</button>
-      </div>
+      <div class="launcher-head"><div><span class="eyebrow">LANCEUR</span><strong>Applications</strong></div><button id="closeLauncher" class="icon-button" aria-label="Fermer">×</button></div>
       <input id="launcherSearch" class="search" type="search" placeholder="Chercher une app…" autocomplete="off" />
       <div id="launcherApps" class="launcher-apps"></div>
     </aside>
 
     <aside id="controlCenter" class="control-center" hidden>
-      <div class="launcher-head">
-        <div><span class="eyebrow">KRYVELL LIVE</span><strong>Centre système</strong></div>
-        <button id="closeControl" class="icon-button" aria-label="Fermer">×</button>
-      </div>
+      <div class="launcher-head"><div><span class="eyebrow">KRYVELL LIVE</span><strong>Centre système</strong></div><button id="closeControl" class="icon-button" aria-label="Fermer">×</button></div>
       <div class="control-card"><span>Réseau</span><strong id="controlNetwork">—</strong></div>
-      <div class="control-card"><span>Airtable</span><strong id="controlAirtable">—</strong></div>
+      <div class="control-card"><span>DATA CORE</span><strong id="controlDataCore">—</strong></div>
+      <div class="control-card"><span>Airtable Control Plane</span><strong id="controlAirtable">—</strong></div>
       <div class="control-card"><span>KRYVELL ID</span><strong id="controlUser">—</strong></div>
       <div class="control-card"><span>Session propriétaire</span><strong id="controlOwner">—</strong></div>
       <div class="control-card"><span>PWA</span><strong id="controlPwa">—</strong></div>
@@ -125,8 +93,8 @@
   </div>
 
   <noscript>KRYVELL OS a besoin de JavaScript pour lancer les applications.</noscript>
-  <script src="/boot-fallback.js?v=0.1.3"></script>
-  <script src="/phone-auth.js?v=0.1.3"></script>
-  <script src="/kryvell-os.js?v=0.1.3"></script>
+  <script src="/boot-fallback.js?v=0.1.4"></script>
+  <script src="/phone-auth.js?v=0.1.4"></script>
+  <script src="/kryvell-os.js?v=0.1.4"></script>
 </body>
 </html>
