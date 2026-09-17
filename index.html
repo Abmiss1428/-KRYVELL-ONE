@@ -10,7 +10,7 @@
   <title>KRYVELL OS — ACStudio</title>
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/kryvell-icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="/kryvell-os.css" />
+  <link rel="stylesheet" href="/kryvell-os.css?v=0.1.1" />
 </head>
 <body>
   <div id="boot" class="boot" aria-live="polite">
@@ -123,6 +123,7 @@
   </div>
 
   <noscript>KRYVELL OS a besoin de JavaScript pour lancer les applications.</noscript>
-  <script src="/kryvell-os.js"></script>
+  <script src="/boot-fallback.js?v=0.1.1"></script>
+  <script src="/kryvell-os.js?v=0.1.1"></script>
 </body>
 </html>
