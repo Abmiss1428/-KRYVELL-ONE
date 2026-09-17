@@ -1,6 +1,6 @@
-const CACHE='kryvell-os-v0.7.0';
-const SHELL=['/','/index.html','/kryvell-os.css','/kryvell-os.js','/nyxcore-life.js','/nyxcore-speed.js','/nyxcore-visuals.js','/nyxcore-hybrid.js','/nyxcore-voice.js','/nyxcore-mobile-controls.js','/nyxcore-pocketpal.html','/fusion-core.css','/fusion-core.js','/boot-fallback.js','/manifest.webmanifest','/kryvell-icon.svg','/kryvell-one.html','/styles.css','/app.js','/owner-session.js','/owner-session.css','/phone-auth.js','/phone-auth.css','/data-core-client.js','/nexcreate-plan.js'];
-self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL)).then(()=>self.skipWaiting()));});
+const CACHE='kryvell-os-v0.7.1';
+const CORE=['/','/index.html','/kryvell-os.css','/kryvell-os.js','/nyxcore-loader.js','/fusion-core.css','/fusion-core.js','/boot-fallback.js','/manifest.webmanifest','/kryvell-icon.svg','/phone-auth.js','/phone-auth.css','/data-core-client.js'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE)).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));});
 self.addEventListener('fetch',event=>{
   const req=event.request;
@@ -11,5 +11,9 @@ self.addEventListener('fetch',event=>{
     event.respondWith(fetch(req).then(res=>{const copy=res.clone();caches.open(CACHE).then(c=>c.put(req,copy));return res;}).catch(()=>caches.match(req).then(r=>r||caches.match('/index.html'))));
     return;
   }
-  event.respondWith(caches.match(req).then(cached=>cached||fetch(req).then(res=>{if(res.ok&&url.origin===self.location.origin){const copy=res.clone();caches.open(CACHE).then(c=>c.put(req,copy));}return res;})));
+  event.respondWith(caches.match(req).then(cached=>{
+    const network=fetch(req).then(res=>{if(res.ok&&url.origin===self.location.origin){const copy=res.clone();caches.open(CACHE).then(c=>c.put(req,copy));}return res;});
+    if(cached){event.waitUntil(network.catch(()=>{}));return cached;}
+    return network;
+  }));
 });
