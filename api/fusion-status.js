@@ -72,20 +72,29 @@ export default async function handler(req,res){
 
   return res.status(200).json({
     ok:true,
-    version:'0.2.1',
+    version:'0.3.0',
     architecture:{
       control_plane:'Airtable',
       data_core:'Supabase/PostgreSQL',
       code_source:'GitHub',
       runtime:'Vercel',
-      shell:'KRYVELL ONE / KRYVELL OS'
+      shell:'KRYVELL ONE / KRYVELL OS',
+      capability_engine:'ABSORB ENGINE'
+    },
+    absorption:{
+      automatic:true,
+      trigger_states:['live','configured','connected'],
+      copies_credentials:false,
+      copies_proprietary_code:false,
+      meaning:'Authorized capabilities are registered into KRYVELL ONE when their adapter becomes active.'
     },
     services,
     security:{
       secrets_in_frontend:false,
       secret_values_exposed:false,
       adapters_isolated:true,
-      live_probes_secretless:true
+      live_probes_secretless:true,
+      absorption_bypasses_authorization:false
     }
   });
 }
