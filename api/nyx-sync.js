@@ -17,12 +17,17 @@ async function edge(body){
 
 export default async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
-  if(req.method==='GET') return res.status(200).json({ok:true,configured:Boolean(SUPABASE_URL&&VERCEL_OIDC_TOKEN),transport:'vercel-oidc-supabase'});
+  if(req.method==='GET') return res.status(200).json({ok:true,configured:Boolean(SUPABASE_URL&&VERCEL_OIDC_TOKEN),transport:'vercel-oidc-supabase',batch:true});
   if(req.method!=='POST') return res.status(405).json({ok:false,error:'method_not_allowed'});
   try{
     const action=req.body?.action;
     if(action==='push'){
       const data=await edge({action:'nyx_push_event',ecosystemId:req.body.ecosystemId,deviceId:req.body.deviceId,eventType:req.body.eventType,agentId:req.body.agentId,payload:req.body.payload});
+      return res.status(200).json(data);
+    }
+    if(action==='push_batch'){
+      const events=Array.isArray(req.body?.events)?req.body.events.slice(0,40):[];
+      const data=await edge({action:'nyx_push_events',ecosystemId:req.body.ecosystemId,deviceId:req.body.deviceId,events});
       return res.status(200).json(data);
     }
     if(action==='pull'){
