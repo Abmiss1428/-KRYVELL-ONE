@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import {upsertPhoneUser,getDataCoreConfig} from '../lib/kryvell-data.js';
 
 const SESSION_SECONDS=60*60*24*30;
 const COOKIE_NAME='kryvell_user_session';
@@ -17,6 +18,9 @@ function signature(secret,userId,expires){
 }
 function stableUserId(secret,phone){
   return `usr_${crypto.createHmac('sha256',secret).update(`phone:${phone}`).digest('base64url').slice(0,24)}`;
+}
+function phoneFingerprint(secret,phone){
+  return crypto.createHmac('sha256',secret).update(`phone-fingerprint:${phone}`).digest('hex');
 }
 
 export default async function handler(req,res){
@@ -44,11 +48,22 @@ export default async function handler(req,res){
     if(data.status!=='approved'||data.valid===false)return res.status(401).json({ok:false,error:'verification_failed'});
 
     const userId=stableUserId(secret,phone);
+    const fingerprint=phoneFingerprint(secret,phone);
+    const core=getDataCoreConfig();
+    let persisted={stored:false,backend:core.userDataBackend};
+    if(core.supabaseConfigured){
+      try{
+        persisted=await upsertPhoneUser({userId,phoneFingerprint:fingerprint});
+      }catch{
+        return res.status(502).json({ok:false,error:'user_store_failed'});
+      }
+    }
+
     const expires=Math.floor(Date.now()/1000)+SESSION_SECONDS;
     const sig=signature(secret,userId,expires);
     const tokenValue=`${expires}.${userId}.${sig}`;
     res.setHeader('Set-Cookie',`${COOKIE_NAME}=${encodeURIComponent(tokenValue)}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${SESSION_SECONDS}`);
-    return res.status(200).json({ok:true,user_session:true,user_id:userId,expires_at:expires});
+    return res.status(200).json({ok:true,user_session:true,user_id:userId,expires_at:expires,data_backend:persisted.backend,persisted:persisted.stored});
   }catch{
     return res.status(502).json({ok:false,error:'sms_provider_unavailable'});
   }
