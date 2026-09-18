@@ -18,14 +18,14 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
 </style>
 </head>
 <body>
-<header><div class="brand"><div class="mark">NYX</div><div><h1>NYXCORE · ACCÈS DIRECT</h1><p>Moteur vivant d’abord · modules ensuite · aucun RESET</p></div></div><a href="/">Accueil OS</a></header>
+<header><div class="brand"><div class="mark">NYX</div><div><h1>NYXCORE · ACCÈS DIRECT</h1><p>Moteur vivant d’abord · modules ensuite · aucun RESET</p></div></div><a href="./index.html">Accueil OS</a></header>
 <section class="quick" aria-label="Commandes NYXCORE">
   <button id="qTalk" data-ready="false">🎙 PARLER</button><button id="qInside" data-ready="false">🔬 INTÉRIEUR</button><button id="qCamera" data-ready="false">👁 CAMÉRA</button><button id="qSpeed" data-ready="false">⚡ VITESSE</button><button id="qPocket">🧠 POCKETPAL</button>
   <select id="qBrain"><option value="auto">🧠 AUTO · Gemini→PocketPal→Math</option><option value="cloud">☁️ GEMINI</option><option value="local">📱 POCKETPAL LOCAL</option><option value="math">🧮 MATH</option></select>
 </section>
 <main><div id="nyxcoreMount"><div class="loading"><div><strong>🧬 Réveil du moteur vivant…</strong><small>Je charge d’abord ta population locale. Les autres modes arrivent juste après.</small></div></div></div></main>
 <footer id="safeStatus">KRYVELL OS 0.8.10 · ouverture NYXCORE en cours…</footer>
-<script src="/nyxcore-loader.js?v=0.8.10"></script>
+<script src="./nyxcore-loader.js?v=0.8.10"></script>
 <script>
 (async()=>{
   const mount=document.getElementById('nyxcoreMount'),status=document.getElementById('safeStatus');
@@ -55,7 +55,7 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   document.getElementById('qInside').onclick=()=>need('qInside',['voice','mobile'],async()=>window.__NYXCORE_MOBILE_CONTROLS__?.openInspector?.());
   document.getElementById('qCamera').onclick=()=>need('qCamera',['vision'],async()=>{const v=window.__NYXCORE_VISION__;v.state?.active?v.stop?.('arrêt manuel'):await v.start?.();});
   document.getElementById('qSpeed').onclick=()=>need('qSpeed',['speed'],async()=>window.__NYXCORE_SPEED__?.cycle?.());
-  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.8.10';
+  document.getElementById('qPocket').onclick=()=>location.href='./nyxcore-pocketpal.html?v=0.8.10';
   document.getElementById('qBrain').onchange=async e=>{const mode=e.target.value;localStorage.setItem('nyxcore:brainMode',mode);try{await window.KryvellNyxLoader?.ensureModule?.('hybrid');}catch{}window.KryvellNyxcore?.setBrainMode?.(mode);if(window.__NYXCORE_HYBRID__?.state)window.__NYXCORE_HYBRID__.state.mode=mode;};
   setInterval(refresh,700);
   try{
