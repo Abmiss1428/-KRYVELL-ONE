@@ -18,6 +18,7 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
 </style>
 <link rel="preload" href="/nyxcore-loader.js?v=0.8.9" as="script">
 <link rel="preload" href="/nyxcore-life.js?v=0.8.9" as="script">
+<link rel="preload" href="/nyxcore-visuals.js?v=0.9.0" as="script">
 </head>
 <body>
 <header><div class="brand"><div class="mark">NYX</div><div><h1>NYXCORE · ACCÈS DIRECT</h1><p>Moteur vivant d’abord · modules ensuite · aucun RESET</p></div></div><a href="/">Accueil OS</a></header>
@@ -27,8 +28,9 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   <select id="qBrain"><option value="auto">🧠 AUTO · Gemini→PocketPal→Math</option><option value="cloud">☁️ GEMINI</option><option value="local">📱 POCKETPAL LOCAL</option><option value="math">🧮 MATH</option></select>
 </section>
 <main><div id="nyxcoreMount"><div class="loading"><div><strong>🧬 Réveil du moteur vivant…</strong><small>Je charge d’abord ta population locale. Les autres modes arrivent juste après.</small></div></div></div></main>
-<footer id="safeStatus">KRYVELL OS 0.8.9 · ouverture NYXCORE en cours…</footer>
+<footer id="safeStatus">KRYVELL OS 0.9.0 · ouverture NYXCORE en cours…</footer>
 <script src="/nyxcore-loader.js?v=0.8.9"></script>
+<script src="/nyxcore-visuals.js?v=0.9.0"></script>
 <script>
 (async()=>{
   const mount=document.getElementById('nyxcoreMount'),status=document.getElementById('safeStatus');
@@ -68,11 +70,11 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
     status.textContent='NYXCORE · chargement de la vie locale…';
     const nyx=await window.KryvellNyxLoader.ensureCore();
     mount.innerHTML='';nyx.render(mount);nyx.start?.();
-    status.textContent='✅ NYXCORE LIFE actif · chargement des modes voix/caméra/IA…';
+    status.textContent='✅ NYXCORE LIFE actif · rendu entités v1.1 · chargement voix/caméra/IA…';
     refresh();
     window.KryvellNyxLoader.loadExtras().then(result=>{
       refresh();
-      status.textContent=result?.errors?.length?'✅ LIFE actif · certains modules optionnels ont été ignorés':'✅ NYXCORE complet · LIFE + voix + caméra + IA chargés';
+      status.textContent=result?.errors?.length?'✅ LIFE actif · rendu entités v1.1 · certains modules optionnels ignorés':'✅ NYXCORE complet · rendu entités v1.1 + voix + caméra + IA';
     });
   }catch(err){
     mount.innerHTML='<div class="error"><div><strong>NYXCORE LIFE n\'a pas fini de démarrer.</strong><small>Aucune donnée locale n\'a été supprimée.</small><div class="actions"><button id="retryNyx">RÉESSAYER</button><a href="/">ACCUEIL OS</a></div></div></div>';
