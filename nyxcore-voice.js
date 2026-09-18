@@ -35,7 +35,9 @@
 
   async function waitForCore() {
     for (let i = 0; i < 240; i++) {
-      if (window.KryvellNyxcore?.engine && window.__NYXCORE_HYBRID__) return true;
+      // Voice/Inner View must not depend on Hybrid being ready.
+      // Hybrid is optional and talk() already falls back to local/math safely.
+      if (window.KryvellNyxcore?.engine) return true;
       await sleep(50);
     }
     return false;
@@ -211,7 +213,9 @@
   function startRecognition() {
     if (uiState.busy) return;
     if (!SpeechRecognitionCtor) {
-      uiState.lastError = 'Reconnaissance vocale non disponible ici. Utilise le champ texte.';
+      uiState.lastError = window.isSecureContext
+        ? 'Reconnaissance vocale non disponible dans ce navigateur. Le texte et la voix de réponse restent disponibles.'
+        : 'Le micro exige une connexion HTTPS sécurisée.';
       renderConversation();
       return;
     }
