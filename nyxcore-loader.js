@@ -2,17 +2,19 @@
 (() => {
   'use strict';
   if (window.KryvellNyxLoader) return;
-  const VERSION='0.8.9';
+  const VERSION='0.8.10';
   const LIFE=`/nyxcore-life.js?v=${VERSION}`;
-  const EXTRAS=[
-    `/nyxcore-speed.js?v=${VERSION}`,
-    `/nyxcore-thermal.js?v=${VERSION}`,
-    `/nyxcore-visuals.js?v=${VERSION}`,
-    `/nyxcore-hybrid.js?v=${VERSION}`,
-    `/nyxcore-vision.js?v=${VERSION}`,
-    `/nyxcore-voice.js?v=${VERSION}`,
-    `/nyxcore-mobile-controls.js?v=${VERSION}`
-  ];
+  const MODULES={
+    speed:`/nyxcore-speed.js?v=${VERSION}`,
+    thermal:`/nyxcore-thermal.js?v=${VERSION}`,
+    visuals:`/nyxcore-visuals.js?v=${VERSION}`,
+    hybrid:`/nyxcore-hybrid.js?v=${VERSION}`,
+    vision:`/nyxcore-vision.js?v=${VERSION}`,
+    voice:`/nyxcore-voice.js?v=${VERSION}`,
+    mobile:`/nyxcore-mobile-controls.js?v=${VERSION}`
+  };
+  const EXTRAS=Object.values(MODULES);
+  const moduleLoading=new Map();
   let coreLoading=null,extrasLoading=null,ambientRaf=0,ambientLast=0,ambientRunning=false,dots=[];
   const isReal=()=>Boolean(window.KryvellNyxcore&&!window.KryvellNyxcore.__lazyStub);
   const readyFor=src=>{
@@ -112,17 +114,31 @@
     })().catch(err=>{coreLoading=null;startAmbient();throw err;});
     return coreLoading;
   }
+  function ensureModule(name){
+    const src=MODULES[name];
+    if(!src) return Promise.reject(new Error('unknown_module:'+name));
+    if(readyFor(src)) return Promise.resolve({name,ready:true});
+    if(moduleLoading.has(name)) return moduleLoading.get(name);
+    const task=(async()=>{
+      await ensureCore();
+      await loadScript(src,5500);
+      return {name,ready:readyFor(src)};
+    })().catch(err=>{
+      console.warn('[NYX LOADER]',name,err);
+      throw err;
+    }).finally(()=>moduleLoading.delete(name));
+    moduleLoading.set(name,task);
+    return task;
+  }
   function loadExtras(){
     if(extrasLoading) return extrasLoading;
     extrasLoading=(async()=>{
-      const errors=[];
-      for(const src of EXTRAS){
-        try{await loadScript(src,7000);}
-        catch(err){errors.push(String(err?.message||err));console.warn('[NYX LOADER]',err);}
-      }
-      window.dispatchEvent(new CustomEvent('nyxcore:extras-ready',{detail:{errors}}));
+      const names=Object.keys(MODULES);
+      const settled=await Promise.allSettled(names.map(name=>ensureModule(name)));
+      const errors=settled.flatMap((item,i)=>item.status==='rejected'?[names[i]+':'+String(item.reason?.message||item.reason)]:[]);
+      window.dispatchEvent(new CustomEvent('nyxcore:extras-ready',{detail:{errors,modules:names}}));
       return {errors};
-    })();
+    })().finally(()=>{extrasLoading=null;});
     return extrasLoading;
   }
   async function ensureFull(){
@@ -158,5 +174,5 @@
   window.addEventListener('resize',()=>{dots=[];},{passive:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAmbient();else if(!isReal())startAmbient();});
   window.addEventListener('load',prefetchWhenIdle,{once:true});
-  window.KryvellNyxLoader={version:VERSION,ensureCore,ensureFull,loadExtras,startAmbient,stopAmbient,get loading(){return Boolean(coreLoading);}};
+  window.KryvellNyxLoader={version:VERSION,ensureCore,ensureFull,ensureModule,loadExtras,startAmbient,stopAmbient,get loading(){return Boolean(coreLoading);}};
 })();
