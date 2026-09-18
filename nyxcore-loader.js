@@ -3,15 +3,17 @@
   'use strict';
   if (window.KryvellNyxLoader) return;
   const VERSION='0.8.10';
-  const LIFE=`/nyxcore-life.js?v=${VERSION}`;
+  const PAGE_BASE=location.hostname.endsWith('github.io')?'/ -KRYVELL-ONE'.replace(' ',''):'';
+  const asset=path=>`${PAGE_BASE}${path}`;
+  const LIFE=asset(`/nyxcore-life.js?v=${VERSION}`);
   const MODULES={
-    speed:`/nyxcore-speed.js?v=${VERSION}`,
-    thermal:`/nyxcore-thermal.js?v=${VERSION}`,
-    visuals:`/nyxcore-visuals.js?v=${VERSION}`,
-    hybrid:`/nyxcore-hybrid.js?v=${VERSION}`,
-    vision:`/nyxcore-vision.js?v=${VERSION}`,
-    voice:`/nyxcore-voice.js?v=${VERSION}`,
-    mobile:`/nyxcore-mobile-controls.js?v=${VERSION}`
+    speed:asset(`/nyxcore-speed.js?v=${VERSION}`),
+    thermal:asset(`/nyxcore-thermal.js?v=${VERSION}`),
+    visuals:asset(`/nyxcore-visuals.js?v=${VERSION}`),
+    hybrid:asset(`/nyxcore-hybrid.js?v=${VERSION}`),
+    vision:asset(`/nyxcore-vision.js?v=${VERSION}`),
+    voice:asset(`/nyxcore-voice.js?v=${VERSION}`),
+    mobile:asset(`/nyxcore-mobile-controls.js?v=${VERSION}`)
   };
   const EXTRAS=Object.values(MODULES);
   const moduleLoading=new Map();
