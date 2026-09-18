@@ -4,12 +4,53 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#09090b">
-<title>KRYVELL OS — retour accueil</title>
-<script>
-try{localStorage.removeItem('nyxcore:safeMode');}catch(e){}
-location.replace('/');
-</script>
-<style>html,body{margin:0;min-height:100%;display:grid;place-items:center;background:#08080a;color:#f5f5f7;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#ff718d}</style>
+<title>NYXCORE · Accès direct — KRYVELL OS</title>
+<style>
+:root{color-scheme:dark;--bg:#08080a;--panel:#101014;--line:#2c2026;--text:#f5f5f7;--muted:#aaa0a6;--crimson:#ff4568}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh}
+header,footer{padding:12px 16px;background:#0b0b0e;border-color:var(--line)}
+header{border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;justify-content:space-between}
+footer{border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+.brand{display:flex;gap:10px;align-items:center}.mark{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:#1b0c11;border:1px solid #5a1b2c;color:var(--crimson);font-weight:900}
+h1{font-size:15px;margin:0}p{margin:3px 0 0;color:var(--muted);font-size:12px}
+a,button{color:var(--text);background:#17171d;border:1px solid #3a2930;border-radius:10px;padding:9px 11px;text-decoration:none;font-weight:700}
+main{min-height:0;overflow:auto}
+#nyxcoreMount{min-height:100%;height:100%;background:#09090c}
+.loading,.error{min-height:52vh;display:grid;place-items:center;text-align:center;padding:28px}
+.loading strong,.error strong{display:block;font-size:16px}.loading small,.error small{display:block;margin-top:8px;color:var(--muted);line-height:1.45}
+.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
+</style>
 </head>
-<body><div>Retour à KRYVELL OS… <a href="/">OUVRIR L’ACCUEIL</a></div></body>
+<body>
+<header>
+  <div class="brand"><div class="mark">NYX</div><div><h1>NYXCORE · ACCÈS DIRECT</h1><p>Route de récupération stable · aucune remise à zéro</p></div></div>
+  <a href="/">Accueil OS</a>
+</header>
+<main>
+  <div id="nyxcoreMount"><div class="loading"><div><strong>🧬 Réveil de NYXCORE…</strong><small>Chargement de la population locale sauvegardée et des modules.</small></div></div></div>
+</main>
+<footer id="safeStatus">KRYVELL OS 0.8.6 · IndexedDB conservé · aucun RESET exécuté</footer>
+<script src="/nyxcore-loader.js?v=0.8.6"></script>
+<script>
+(async()=>{
+  const mount=document.getElementById('nyxcoreMount');
+  const status=document.getElementById('safeStatus');
+  try{
+    if(!window.KryvellNyxLoader?.ensureFull) throw new Error('loader_unavailable');
+    status.textContent='NYXCORE · chargement du moteur complet…';
+    const nyx=await window.KryvellNyxLoader.ensureFull();
+    if(!nyx?.render) throw new Error('render_unavailable');
+    mount.innerHTML='';
+    nyx.render(mount);
+    status.textContent='NYXCORE · moteur chargé · données locales conservées · aucun RESET';
+  }catch(err){
+    mount.innerHTML='<div class="error"><div><strong>NYXCORE n’a pas fini son chargement.</strong><small>Aucune donnée locale n’a été supprimée. Réessaie simplement le chargement.</small><div class="actions"><button id="retryNyx">RÉESSAYER</button><a href="/">ACCUEIL OS</a></div></div></div>';
+    status.textContent='NYXCORE · erreur de chargement sans remise à zéro';
+    document.getElementById('retryNyx')?.addEventListener('click',()=>location.reload());
+  }
+})();
+</script>
+</body>
 </html>
