@@ -24,8 +24,8 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   <select id="qBrain"><option value="auto">🧠 AUTO · Gemini→PocketPal→Math</option><option value="cloud">☁️ GEMINI</option><option value="local">📱 POCKETPAL LOCAL</option><option value="math">🧮 MATH</option></select>
 </section>
 <main><div id="nyxcoreMount"><div class="loading"><div><strong>🧬 Réveil du moteur vivant…</strong><small>Je charge d’abord ta population locale. Les autres modes arrivent juste après.</small></div></div></div></main>
-<footer id="safeStatus">KRYVELL OS 0.8.8 · ouverture NYXCORE en cours…</footer>
-<script src="/nyxcore-loader.js?v=0.8.8"></script>
+<footer id="safeStatus">KRYVELL OS 0.8.9 · ouverture NYXCORE en cours…</footer>
+<script src="/nyxcore-loader.js?v=0.8.9"></script>
 <script>
 (async()=>{
   const mount=document.getElementById('nyxcoreMount'),status=document.getElementById('safeStatus');
@@ -41,7 +41,7 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   document.getElementById('qInside').onclick=()=>window.__NYXCORE_MOBILE_CONTROLS__?.openInspector?.();
   document.getElementById('qCamera').onclick=()=>{const v=window.__NYXCORE_VISION__;if(!v?.start)return;v.state?.active?v.stop?.('arrêt manuel'):v.start?.();setTimeout(refresh,200);};
   document.getElementById('qSpeed').onclick=()=>{window.__NYXCORE_SPEED__?.cycle?.();setTimeout(refresh,80);};
-  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.8.8';
+  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.8.9';
   document.getElementById('qBrain').onchange=e=>{const mode=e.target.value;localStorage.setItem('nyxcore:brainMode',mode);window.KryvellNyxcore?.setBrainMode?.(mode);if(window.__NYXCORE_HYBRID__?.state)window.__NYXCORE_HYBRID__.state.mode=mode;};
   setInterval(refresh,700);
   try{
