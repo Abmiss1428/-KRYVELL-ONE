@@ -1,0 +1,21 @@
+/* KRYVELL AGENTIC CORE v1.0.0 */
+.agentic-shell{min-height:100%;padding:14px;background:radial-gradient(circle at 15% 0%,rgba(255,46,86,.10),transparent 30%),#09090d;color:#f5f5f7}
+.agentic-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.agentic-head h2{margin:0;font-size:19px}.agentic-head p{margin:4px 0 0;color:#9a9aa5;font-size:12px;line-height:1.4}
+.agentic-guard{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #4d2a34;border-radius:12px;background:#171116;font-size:11px;white-space:nowrap}
+.agentic-guard input{accent-color:#ff3156}.agentic-guard small{color:#8f8f99}
+.agentic-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.agentic-card{border:1px solid #2d2d35;border-radius:15px;background:linear-gradient(155deg,#141419,#0d0d11);padding:12px;min-width:0}
+.agentic-card h3{margin:0 0 8px;font-size:13px}.agentic-card p{color:#9b9ba5;font-size:11px;line-height:1.45}
+.agentic-input{grid-column:1/-1}
+.agentic-input textarea{width:100%;min-height:120px;resize:vertical;border:1px solid #34343d;border-radius:12px;background:#0b0b0f;color:#f4f4f6;padding:12px;font:500 13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+.agentic-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px}
+.agentic-row select,.agentic-row button{border:1px solid #35353e;border-radius:10px;background:#17171d;color:#fff;padding:9px 10px;font-weight:800}
+.agentic-run{background:#4b0d20!important;border-color:#8b2540!important;color:#fff!important}.agentic-run:disabled{opacity:.55}
+.agentic-status{font-size:10px;color:#9898a2}
+.agentic-output{white-space:pre-wrap;color:#dddde2;font-size:11px;line-height:1.5;max-height:45vh;overflow:auto}
+.agentic-agent{display:flex;align-items:center;gap:8px;margin-bottom:8px}.agentic-badge{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:#241017;border:1px solid #5d2333;color:#ff6f8c;font-size:9px;font-weight:900}
+.agentic-guard-state{grid-column:1/-1;border:1px solid #3b3036;border-radius:12px;padding:10px;background:#0f0f13;font-size:11px;color:#c9c9d0}
+.agentic-guard-state.warn{border-color:#7d4a27;background:#1b130c;color:#ffd4a3}.agentic-guard-state.off{opacity:.7}
+.agentic-history{grid-column:1/-1}.agentic-history-list{display:grid;gap:7px}.agentic-history-item{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 9px;border:1px solid #292930;border-radius:10px;background:#0f0f13;font-size:10px}.agentic-history-item button{border:0;background:transparent;color:#ff7b95;font-weight:800}
+@media(max-width:760px){.agentic-grid{grid-template-columns:1fr}.agentic-input,.agentic-guard-state,.agentic-history{grid-column:1}.agentic-head{flex-direction:column}.agentic-guard{white-space:normal;width:100%}}
