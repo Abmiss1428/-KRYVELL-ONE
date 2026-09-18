@@ -1,4 +1,4 @@
-/* NYXCORE SMART LOADER v1.3.1 — KRYVELL OS 0.8.9 */
+/* NYXCORE SMART LOADER v1.3.1 — KRYVELL OS 0.8.10 */
 (() => {
   'use strict';
   if (window.KryvellNyxLoader) return;
@@ -102,7 +102,7 @@
       const started=Date.now();
       while(!isReal()&&Date.now()-started<5000) await new Promise(r=>setTimeout(r,40));
       if(!isReal()) throw new Error('nyxcore_life_not_ready');
-      const migrationKey='nyxcore:migration:0.8.9-resume';
+      const migrationKey='nyxcore:migration:0.8.10-resume';
       if(!localStorage.getItem(migrationKey)){
         try{
           localStorage.removeItem('nyxcore:safeMode');
