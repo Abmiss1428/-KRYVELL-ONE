@@ -12,20 +12,23 @@ body{display:grid;grid-template-rows:auto auto 1fr auto;min-height:100dvh}header
 header{border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center;justify-content:space-between}
 footer{border-top:1px solid var(--line);font-size:12px;color:var(--muted)}.brand{display:flex;gap:10px;align-items:center}.mark{width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:#1b0c11;border:1px solid #5a1b2c;color:var(--crimson);font-weight:900}
 h1{font-size:15px;margin:0}p{margin:3px 0 0;color:var(--muted);font-size:12px}a,button,select{color:var(--text);background:#17171d;border:1px solid #3a2930;border-radius:10px;padding:9px 11px;text-decoration:none;font-weight:700}
-.quick{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:9px 12px;border-bottom:1px solid #241c20;background:#0d0d11;position:sticky;top:0;z-index:5}.quick button{font-size:10px;padding:8px 5px}.quick button[data-ready="false"]{opacity:.42}.quick select{grid-column:1/-1;font-size:10px}
+.quick{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:9px 12px;border-bottom:1px solid #241c20;background:#0d0d11;position:sticky;top:0;z-index:5}.quick button{font-size:10px;padding:8px 5px}.quick button[data-ready="false"]{opacity:.62}.quick select{grid-column:1/-1;font-size:10px}
 main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;background:#09090c}.loading,.error{min-height:52vh;display:grid;place-items:center;text-align:center;padding:28px}.loading strong,.error strong{display:block;font-size:16px}.loading small,.error small{display:block;margin-top:8px;color:var(--muted);line-height:1.45}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 @media(max-width:560px){.quick{grid-template-columns:repeat(3,minmax(0,1fr))}.quick select{grid-column:1/-1}}
 </style>
+<link rel="preload" href="/nyxcore-loader.js?v=0.8.9" as="script">
+<link rel="preload" href="/nyxcore-life.js?v=0.8.9" as="script">
 </head>
 <body>
 <header><div class="brand"><div class="mark">NYX</div><div><h1>NYXCORE · ACCÈS DIRECT</h1><p>Moteur vivant d’abord · modules ensuite · aucun RESET</p></div></div><a href="/">Accueil OS</a></header>
 <section class="quick" aria-label="Commandes NYXCORE">
   <button id="qTalk" data-ready="false">🎙 PARLER</button><button id="qInside" data-ready="false">🔬 INTÉRIEUR</button><button id="qCamera" data-ready="false">👁 CAMÉRA</button><button id="qSpeed" data-ready="false">⚡ VITESSE</button><button id="qPocket">🧠 POCKETPAL</button>
+  <button id="qAuto" data-brain="auto">🧠 AUTO</button><button id="qCloud" data-brain="cloud">☁️ GEMINI</button><button id="qLocal" data-brain="local">📱 LOCAL</button><button id="qMath" data-brain="math">🧮 MATH</button><button id="qAll">⚙ TOUS MODES</button>
   <select id="qBrain"><option value="auto">🧠 AUTO · Gemini→PocketPal→Math</option><option value="cloud">☁️ GEMINI</option><option value="local">📱 POCKETPAL LOCAL</option><option value="math">🧮 MATH</option></select>
 </section>
 <main><div id="nyxcoreMount"><div class="loading"><div><strong>🧬 Réveil du moteur vivant…</strong><small>Je charge d’abord ta population locale. Les autres modes arrivent juste après.</small></div></div></div></main>
-<footer id="safeStatus">KRYVELL OS 0.8.8 · ouverture NYXCORE en cours…</footer>
-<script src="/nyxcore-loader.js?v=0.8.8"></script>
+<footer id="safeStatus">KRYVELL OS 0.8.9 · ouverture NYXCORE en cours…</footer>
+<script src="/nyxcore-loader.js?v=0.8.9"></script>
 <script>
 (async()=>{
   const mount=document.getElementById('nyxcoreMount'),status=document.getElementById('safeStatus');
@@ -36,13 +39,29 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
     const cam=document.getElementById('qCamera');if(cam&&v?.state)cam.textContent=v.state.active?'👁 CAM ON':'👁 CAMÉRA';
     const sp=document.getElementById('qSpeed');if(sp&&s?.state)sp.textContent='⚡ ×'+(s.state.effective||s.state.requested||1);
     const sel=document.getElementById('qBrain');if(h?.state?.mode&&document.activeElement!==sel)sel.value=h.state.mode;
+    const mode=h?.state?.mode||localStorage.getItem('nyxcore:brainMode')||'auto';
+    document.querySelectorAll('[data-brain]').forEach(b=>b.dataset.ready=String(Boolean(h)));
+    document.querySelectorAll('[data-brain]').forEach(b=>b.style.outline=b.dataset.brain===mode?'2px solid #a62b49':'none');
   }
   document.getElementById('qTalk').onclick=()=>window.__NYXCORE_MOBILE_CONTROLS__?.openTalk?.();
   document.getElementById('qInside').onclick=()=>window.__NYXCORE_MOBILE_CONTROLS__?.openInspector?.();
   document.getElementById('qCamera').onclick=()=>{const v=window.__NYXCORE_VISION__;if(!v?.start)return;v.state?.active?v.stop?.('arrêt manuel'):v.start?.();setTimeout(refresh,200);};
   document.getElementById('qSpeed').onclick=()=>{window.__NYXCORE_SPEED__?.cycle?.();setTimeout(refresh,80);};
-  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.8.8';
-  document.getElementById('qBrain').onchange=e=>{const mode=e.target.value;localStorage.setItem('nyxcore:brainMode',mode);window.KryvellNyxcore?.setBrainMode?.(mode);if(window.__NYXCORE_HYBRID__?.state)window.__NYXCORE_HYBRID__.state.mode=mode;};
+  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.8.9';
+  function setBrain(mode){
+    localStorage.setItem('nyxcore:brainMode',mode);
+    window.KryvellNyxcore?.setBrainMode?.(mode);
+    if(window.__NYXCORE_HYBRID__?.state)window.__NYXCORE_HYBRID__.state.mode=mode;
+    document.getElementById('qBrain').value=mode;refresh();
+  }
+  document.getElementById('qBrain').onchange=e=>setBrain(e.target.value);
+  document.querySelectorAll('[data-brain]').forEach(b=>b.onclick=()=>setBrain(b.dataset.brain));
+  document.getElementById('qAll').onclick=async()=>{
+    const b=document.getElementById('qAll');b.textContent='⚙ CHARGEMENT…';b.disabled=true;
+    const result=await window.KryvellNyxLoader?.loadAllModes?.();
+    refresh();b.disabled=false;b.textContent='⚙ TOUS MODES';
+    status.textContent=result?.errors?.length?'✅ LIFE actif · certains modes secondaires n’ont pas répondu':'✅ TOUS LES MODES NYXCORE SONT CHARGÉS';
+  };
   setInterval(refresh,700);
   try{
     if(!window.KryvellNyxLoader?.ensureCore)throw new Error('loader_unavailable');
