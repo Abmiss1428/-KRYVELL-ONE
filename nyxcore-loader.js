@@ -1,8 +1,8 @@
-/* NYXCORE SMART LOADER v1.3.0 — KRYVELL OS 0.8.8 */
+/* NYXCORE SMART LOADER v1.4.0 — KRYVELL OS 0.8.9 */
 (() => {
   'use strict';
   if (window.KryvellNyxLoader) return;
-  const VERSION='0.8.8';
+  const VERSION='0.8.9';
   const LIFE=`/nyxcore-life.js?v=${VERSION}`;
   const EXTRAS=[
     `/nyxcore-speed.js?v=${VERSION}`,
@@ -100,7 +100,7 @@
       const started=Date.now();
       while(!isReal()&&Date.now()-started<5000) await new Promise(r=>setTimeout(r,40));
       if(!isReal()) throw new Error('nyxcore_life_not_ready');
-      const migrationKey='nyxcore:migration:0.8.8-resume';
+      const migrationKey='nyxcore:migration:0.8.9-resume';
       if(!localStorage.getItem(migrationKey)){
         try{
           localStorage.removeItem('nyxcore:safeMode');
@@ -116,10 +116,14 @@
     if(extrasLoading) return extrasLoading;
     extrasLoading=(async()=>{
       const errors=[];
-      for(const src of EXTRAS){
-        try{await loadScript(src,7000);}
-        catch(err){errors.push(String(err?.message||err));console.warn('[NYX LOADER]',err);}
-      }
+      const loadGroup=async group=>{
+        const settled=await Promise.allSettled(group.map(src=>loadScript(src,5000)));
+        settled.forEach((r,i)=>{if(r.status==='rejected'){errors.push(String(r.reason?.message||r.reason));console.warn('[NYX LOADER]',group[i],r.reason);}});
+      };
+      // Group 1: modules that depend only on LIFE.
+      await loadGroup(EXTRAS.slice(0,4));
+      // Group 2: voice/mobile benefit from Hybrid already being ready.
+      await loadGroup(EXTRAS.slice(4));
       window.dispatchEvent(new CustomEvent('nyxcore:extras-ready',{detail:{errors}}));
       return {errors};
     })();
@@ -158,5 +162,5 @@
   window.addEventListener('resize',()=>{dots=[];},{passive:true});
   document.addEventListener('visibilitychange',()=>{if(document.hidden)stopAmbient();else if(!isReal())startAmbient();});
   window.addEventListener('load',prefetchWhenIdle,{once:true});
-  window.KryvellNyxLoader={version:VERSION,ensureCore,ensureFull,loadExtras,startAmbient,stopAmbient,get loading(){return Boolean(coreLoading);}};
+  window.KryvellNyxLoader={version:VERSION,ensureCore,ensureFull,loadExtras,loadAllModes:loadExtras,startAmbient,stopAmbient,get loading(){return Boolean(coreLoading);}};
 })();
