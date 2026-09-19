@@ -4,12 +4,12 @@ import {upsertPhoneUser,getDataCoreConfig} from '../lib/kryvell-data.js';
 const SESSION_SECONDS=60*60*24*30;
 const COOKIE_NAME='kryvell_user_session';
 
-function normalizePhone(input=''){
+export function normalizePhone(input=''){
   let value=String(input||'').trim().replace(/[\s().-]/g,'');
   if(value.startsWith('00'))value=`+${value.slice(2)}`;
   return /^\+[1-9]\d{7,14}$/.test(value)?value:null;
 }
-function normalizeCode(input=''){
+export function normalizeCode(input=''){
   const value=String(input||'').replace(/\D/g,'');
   return /^\d{4,10}$/.test(value)?value:null;
 }
