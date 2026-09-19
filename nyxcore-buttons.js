@@ -1,11 +1,11 @@
-/* NYXCORE BUTTON CONTROL v0.9.2
+/* NYXCORE BUTTON CONTROL v0.9.3
  * Active les boutons, charge les modules avant l'action, aucun RESET.
  */
 (() => {
   'use strict';
   if (window.__NYXCORE_BUTTON_CONTROL__) return;
 
-  const V = '0.9.2';
+  const V = '0.9.3';
   const $ = id => document.getElementById(id);
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -47,7 +47,10 @@
     const loader = window.KryvellNyxLoader;
     if (!loader?.ensureCore) throw new Error('NYXCORE loader indisponible');
     await loader.ensureCore();
-    const result = await loader.loadAllModes?.();
+    const result = await Promise.race([
+      loader.loadAllModes?.(),
+      sleep(6000).then(() => ({ errors: ['load_timeout'] }))
+    ]).catch(err => ({ errors: [String(err?.message || err)] }));
     // laisse les modules réussis utilisables même si un autre module optionnel échoue
     return result || {errors:[]};
   }

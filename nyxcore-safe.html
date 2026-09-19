@@ -16,10 +16,10 @@ h1{font-size:15px;margin:0}p{margin:3px 0 0;color:var(--muted);font-size:12px}a,
 main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;background:#09090c}.loading,.error{min-height:52vh;display:grid;place-items:center;text-align:center;padding:28px}.loading strong,.error strong{display:block;font-size:16px}.loading small,.error small{display:block;margin-top:8px;color:var(--muted);line-height:1.45}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:14px}
 @media(max-width:560px){.quick{grid-template-columns:repeat(3,minmax(0,1fr))}.quick select{grid-column:1/-1}}
 </style>
-<link rel="preload" href="/nyxcore-loader.js?v=0.8.9" as="script">
-<link rel="preload" href="/nyxcore-life.js?v=0.8.9" as="script">
-<link rel="preload" href="/nyxcore-visuals.js?v=0.9.1" as="script">
-<link rel="preload" href="/nyxcore-buttons.js?v=0.9.2" as="script">
+<link rel="preload" href="/nyxcore-loader.js?v=0.9.3" as="script">
+<link rel="preload" href="/nyxcore-life.js?v=0.9.3" as="script">
+<link rel="preload" href="/nyxcore-visuals.js?v=0.9.3" as="script">
+<link rel="preload" href="/nyxcore-buttons.js?v=0.9.3" as="script">
 </head>
 <body>
 <header><div class="brand"><div class="mark">NYX</div><div><h1>NYXCORE · ACCÈS DIRECT</h1><p>Moteur vivant d’abord · modules ensuite · aucun RESET</p></div></div><a href="/">Accueil OS</a></header>
@@ -29,9 +29,9 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   <select id="qBrain"><option value="auto">🧠 AUTO · Gemini→PocketPal→Math</option><option value="cloud">☁️ GEMINI</option><option value="local">📱 POCKETPAL LOCAL</option><option value="math">🧮 MATH</option></select>
 </section>
 <main><div id="nyxcoreMount"><div class="loading"><div><strong>🧬 Réveil du moteur vivant…</strong><small>Je charge d’abord ta population locale. Les autres modes arrivent juste après.</small></div></div></div></main>
-<footer id="safeStatus">KRYVELL OS 0.9.2 · ouverture NYXCORE en cours…</footer>
-<script src="/nyxcore-loader.js?v=0.8.9"></script>
-<script src="/nyxcore-visuals.js?v=0.9.1"></script>
+<footer id="safeStatus">KRYVELL OS 0.9.3 · ouverture NYXCORE en cours…</footer>
+<script src="/nyxcore-loader.js?v=0.9.3"></script>
+<script src="/nyxcore-visuals.js?v=0.9.3"></script>
 <script>
 (async()=>{
   const mount=document.getElementById('nyxcoreMount'),status=document.getElementById('safeStatus');
@@ -50,7 +50,7 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   document.getElementById('qInside').onclick=()=>window.__NYXCORE_MOBILE_CONTROLS__?.openInspector?.();
   document.getElementById('qCamera').onclick=()=>{const v=window.__NYXCORE_VISION__;if(!v?.start)return;v.state?.active?v.stop?.('arrêt manuel'):v.start?.();setTimeout(refresh,200);};
   document.getElementById('qSpeed').onclick=()=>{window.__NYXCORE_SPEED__?.cycle?.();setTimeout(refresh,80);};
-  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.9.2';
+  document.getElementById('qPocket').onclick=()=>location.href='/nyxcore-pocketpal.html?v=0.9.3';
   function setBrain(mode){
     localStorage.setItem('nyxcore:brainMode',mode);
     window.KryvellNyxcore?.setBrainMode?.(mode);
@@ -84,6 +84,6 @@ main{min-height:0;overflow:auto}#nyxcoreMount{min-height:100%;height:100%;backgr
   }
 })();
 </script>
-<script src="/nyxcore-buttons.js?v=0.9.2"></script>
+<script src="/nyxcore-buttons.js?v=0.9.3"></script>
 </body>
 </html>

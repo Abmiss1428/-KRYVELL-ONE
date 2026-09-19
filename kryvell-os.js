@@ -2,7 +2,7 @@ const APPS={
   'kryvell-one':{name:'KRYVELL ONE',badge:'K1',desc:'Hub principal ACStudio. Ouvre les modules existants sans les remplacer.',mode:'iframe',url:'/kryvell-one.html'},
   agentic:{name:'KRYVELL AGENTIC',badge:'AI',desc:'IA personnelle Olivia : analyse de complexité, architecture BRICKCORE et garde passive optionnelle.',mode:'agentic'},
   fusion:{name:'FUSION CORE',badge:'∞',desc:'Orchestration unifiée Airtable, Supabase, GitHub, Vercel, Drive, Canva et workers créatifs IA.',mode:'fusion'},
-  nyxcore:{name:'NYXCORE',badge:'NYX',desc:'Écosystème de vie artificielle local : ADN, énergie, reproduction, pooling, PocketPal et lignées.',mode:'iframe',url:'/nyxcore-safe.html?v=0.8.9'},
+  nyxcore:{name:'NYXCORE',badge:'NYX',desc:'Écosystème de vie artificielle local : ADN, énergie, reproduction, pooling, PocketPal et lignées.',mode:'iframe',url:'/nyxcore-safe.html?v=0.9.3'},
   redline:{name:'REDLINE NEXUS',badge:'RNX',desc:'Nexus Control, canon, personnages et éléments LOCK.',mode:'iframe',url:'/kryvell-one.html'},
   nexarcana:{name:'NEXARCANA',badge:'NXA',desc:'Bibliothèque tarot, méthodes de tirage et atelier.',mode:'iframe',url:'/kryvell-one.html'},
   inkarnyx:{name:'INKARNYX',badge:'INK',desc:'Studio dessin et tatouage : OMNI Draw, Brush Engine, stencil et PHOMEMO.',mode:'iframe',url:'/kryvell-one.html'},
