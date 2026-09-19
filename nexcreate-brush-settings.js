@@ -7,7 +7,7 @@
   let recipe={...defaults};
   let strokeTravel=0;
 
-  try{Object.assign(recipe,JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')||{})}catch{}
+  try{Object.assign(recipe,JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}')||{})}catch(e){console.warn('Failed to load brush settings:', e)}
 
   const baseCanvasPoint=canvasPoint;
   canvasPoint=function(e){const p=baseCanvasPoint(e);p.tilt=Math.min(90,Math.hypot(Number(e.tiltX)||0,Number(e.tiltY)||0));p.time=performance.now();return p};
@@ -21,7 +21,7 @@
   function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
   function renderFactor(){if(recipe.render==='glaze')return .58;if(recipe.render==='dense')return 1.15;if(recipe.render==='wet')return .72;return 1}
   function pressureValue(p){const curve=clamp(recipe.pressureCurve/100,.5,2.5);return Math.pow(clamp(p||.72,.02,1),curve)}
-  function saveRecipe(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(recipe))}catch{};updateSummary()}
+  function saveRecipe(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(recipe))}catch(e){console.warn('Failed to save brush settings:', e)};updateSummary()}
   function syncCore(){settings.tip=recipe.shape==='square'?'square':'round';settings.grain=recipe.grain;const t=document.getElementById('tipInput'),g=document.getElementById('grainInput');if(t)t.value=settings.tip;if(g)g.value=settings.grain;saveRecipe()}
 
   const baseDrawSegment=drawSegment;
@@ -75,7 +75,7 @@
   function recipePayload(){return{featureId:'BRUSH-LAB-003',engine:'NEXCREATE OMNI DRAW BETA',mappingVersion,generatedAt:new Date().toISOString(),core:{size:settings.size,opacity:Math.round(settings.opacity*100),stabilization:Math.round(settings.stabilizer*100)},recipe:{...recipe},procreateConceptMap:{spacing:'Stroke Path > Spacing',jitter:'Stroke Path > Jitter',falloff:'Properties/Rendering fall-off concept',taper:'Taper',shape:'Shape',grain:'Grain',render:'Rendering',wetMix:'Wet Mix',colorDynamics:'Color Dynamics',speed:'Dynamics > Speed',pressure:'Apple Pencil > Pressure',tilt:'Apple Pencil > Tilt',size:'Properties/Apple Pencil size response',opacity:'Properties/Apple Pencil opacity response',stabilization:'Stabilization'},testSheet:['Tracer une ligne lente puis rapide','Tester pression faible puis forte','Tester courbe courte avec taper','Comparer grain et rendu','Vérifier taille/opacité après sauvegarde']}}
   function updateSummary(){const el=document.getElementById('brushLabSummary');if(!el)return;el.innerHTML=`<strong>${recipe.shape==='square'?'Carrée':'Ronde'} · ${recipe.grain}</strong><br>Espacement ${recipe.spacing}% · Jitter ${recipe.jitter}% · Taper ${recipe.taper}% · Flow ${recipe.flow}% · Pression ${recipe.pressureCurve}% · Wet ${recipe.wetMix}% · ${recipe.render}`}
   function downloadRecipe(){const blob=new Blob([JSON.stringify(recipePayload(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`NEXCREATE-BRUSH-RECIPE-${new Date().toISOString().slice(0,10)}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}
-  async function copyRecipe(){const text=JSON.stringify(recipePayload(),null,2);try{await navigator.clipboard.writeText(text);const s=document.getElementById('toolStatus');if(s)s.textContent='Recette copiée ✅'}catch{const blob=new Blob([text],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='NEXCREATE-BRUSH-RECIPE.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}}
+  async function copyRecipe(){const text=JSON.stringify(recipePayload(),null,2);try{await navigator.clipboard.writeText(text);const s=document.getElementById('toolStatus');if(s)s.textContent='Recette copiée ✅'}catch(e){console.warn('Failed to write to clipboard, falling back to download:', e);const blob=new Blob([text],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='NEXCREATE-BRUSH-RECIPE.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)}}
 
   function installPanel(){
     const side=document.querySelector('.nx-side');if(!side||document.getElementById('brushLab003'))return;
