@@ -1,0 +1,28 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "**KRYVELL ONE — KRYV3LL-0N3 SYSTEM**   by ACStudio · REDLINE NEXUS",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abmiss1428/-KRYVELL-ONE.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Abmiss1428/-KRYVELL-ONE/issues"
+  },
+  "homepage": "https://github.com/Abmiss1428/-KRYVELL-ONE#readme",
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
+}
