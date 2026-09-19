@@ -6,6 +6,8 @@
   'use strict';
   if (window.__NYXCORE_VISUAL_MATRIX__) return;
 
+  window.__NYXCORE_VISUAL_MATRIX__ = { version: '1.2.0', ready: false };
+
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const WORLD_W = 2400;
@@ -179,7 +181,7 @@
           engine.__visualMatrixPatched=true;
         }
         installPocketPalButton();
-        window.__NYXCORE_VISUAL_MATRIX__={version:'1.2.0',installPocketPalButton};
+        window.__NYXCORE_VISUAL_MATRIX__={version:'1.2.0',ready:true,installPocketPalButton};
         window.dispatchEvent(new CustomEvent('nyxcore:visual-ready',{detail:{version:'1.2.0'}}));
         return true;
       }

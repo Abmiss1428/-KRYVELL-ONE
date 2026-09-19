@@ -35,7 +35,7 @@
 
   async function waitForCore() {
     for (let i = 0; i < 240; i++) {
-      if (window.KryvellNyxcore?.engine && window.__NYXCORE_HYBRID__) return true;
+      if (window.KryvellNyxcore?.engine) return true;
       await sleep(50);
     }
     return false;

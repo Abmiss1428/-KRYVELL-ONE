@@ -54,6 +54,7 @@
     modal.innerHTML=`<section class="nyx-mobile-sheet"><div class="nyx-mobile-head"><strong>${esc(title)}</strong><button type="button" data-close>×</button></div><div class="nyx-mobile-body" data-body></div></section>`;
     modal.querySelector('[data-close]').onclick=closeModal;
     modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+    modal.addEventListener('touchend',e=>{if(e.target===modal){e.preventDefault();closeModal();}});
     document.body.appendChild(modal);
     return modal.querySelector('[data-body]');
   }
@@ -77,7 +78,7 @@
       let finalText='';
       r.onstart=()=>status.textContent='🎙 J’écoute…';
       r.onresult=e=>{let interim='';for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0]?.transcript||'';if(e.results[i].isFinal)finalText+=t;else interim+=t;}input.value=(finalText||interim).trim();};
-      r.onerror=e=>status.textContent=e.error==='not-allowed'?'Autorise le micro pour KRYVELL dans iOS/Safari.':'Micro: '+(e.error||'erreur');
+      r.onerror=e=>status.textContent=e.error==='not-allowed'?'Autorise le micro dans Safari/iOS pour parler.':e.error==='audio-capture'?'Microphone introuvable ou indisponible.':'Micro: '+(e.error||'erreur');
       r.onend=async()=>{const txt=(finalText||input.value||'').trim();if(!txt){status.textContent='Micro arrêté.';return;}status.textContent='NYXCORE réfléchit…';try{await voice()?.talk?.(txt);status.textContent='Message reçu par NYXCORE.';}catch(e){status.textContent='Erreur: '+(e?.message||e);}};
       try{r.start();}catch(e){status.textContent='Micro: '+(e?.message||e);}
     };
