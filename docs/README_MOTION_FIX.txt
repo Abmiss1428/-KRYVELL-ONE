@@ -1,0 +1,1 @@
+NYXCORE motion freeze fix branch. No IndexedDB reset. No population deletion.
