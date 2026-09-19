@@ -23,7 +23,7 @@ const SHELL = [
   '/agentic-core.css', '/agentic-core.js', '/data-core-client.js',
   '/nyxcore-safe.html', '/nyxcore-loader.js', '/nyxcore-life.js',
   '/nyxcore-buttons.js', '/nyxcore-visuals.js', '/nyxcore-speed.js',
-  '/nyxcore-thermal.js', '/nyxcore-hybrid.js', '/nyxcore-vision.js',
+  '/nyxcore-thermal.js', '/nyxcore-nextral.js', '/nyxcore-hybrid.js', '/nyxcore-vision.js',
   '/nyxcore-voice.js', '/nyxcore-mobile-controls.js'
 ];
 
