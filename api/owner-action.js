@@ -5,8 +5,8 @@ const GENERATION_TABLE='tblnOmSlNQbkYHgEB';
 
 function text(v,max=5000){return typeof v==='string'?v.trim().slice(0,max):'';}
 function parseCookies(header=''){return Object.fromEntries(String(header).split(';').map(v=>v.trim()).filter(Boolean).map(v=>{const i=v.indexOf('=');return i<0?[v,'']:[v.slice(0,i),v.slice(i+1)];}));}
-function signature(ownerKey,expires){return crypto.createHmac('sha256',ownerKey).update(`owner:${expires}`).digest('base64url');}
-function hasOwnerSession(req,ownerKey){
+export function signature(ownerKey,expires){return crypto.createHmac('sha256',ownerKey).update(`owner:${expires}`).digest('base64url');}
+export function hasOwnerSession(req,ownerKey){
   if(!ownerKey)return false;
   const token=parseCookies(req.headers.cookie||'').kryvell_owner_session;
   if(!token)return false;
