@@ -1,13 +1,14 @@
-/* NYXCORE SMART LOADER v1.4.0 — KRYVELL OS 0.8.9 */
+/* NYXCORE SMART LOADER v1.5.0 — KRYVELL OS 0.9.3 */
 (() => {
   'use strict';
   if (window.KryvellNyxLoader) return;
-  const VERSION='0.8.9';
+  const VERSION='0.9.3';
   const LIFE=`/nyxcore-life.js?v=${VERSION}`;
   const EXTRAS=[
     `/nyxcore-speed.js?v=${VERSION}`,
     `/nyxcore-thermal.js?v=${VERSION}`,
     `/nyxcore-visuals.js?v=${VERSION}`,
+    `/nyxcore-nextral.js?v=${VERSION}`,
     `/nyxcore-hybrid.js?v=${VERSION}`,
     `/nyxcore-vision.js?v=${VERSION}`,
     `/nyxcore-voice.js?v=${VERSION}`,
@@ -20,6 +21,7 @@
     if(src.includes('nyxcore-speed')) return Boolean(window.__NYXCORE_SPEED__);
     if(src.includes('nyxcore-thermal')) return Boolean(window.__NYXCORE_THERMAL__);
     if(src.includes('nyxcore-visuals')) return Boolean(window.__NYXCORE_VISUAL_MATRIX__);
+    if(src.includes('nyxcore-nextral')) return Boolean(window.__NEXTRAL_CITY__);
     if(src.includes('nyxcore-hybrid')) return Boolean(window.__NYXCORE_HYBRID__);
     if(src.includes('nyxcore-vision')) return Boolean(window.__NYXCORE_VISION__);
     if(src.includes('nyxcore-voice')) return Boolean(window.__NYXCORE_VOICE__);
@@ -100,7 +102,7 @@
       const started=Date.now();
       while(!isReal()&&Date.now()-started<5000) await new Promise(r=>setTimeout(r,40));
       if(!isReal()) throw new Error('nyxcore_life_not_ready');
-      const migrationKey='nyxcore:migration:0.8.9-resume';
+      const migrationKey='nyxcore:migration:0.9.3-resume';
       if(!localStorage.getItem(migrationKey)){
         try{
           localStorage.removeItem('nyxcore:safeMode');
@@ -120,10 +122,10 @@
         const settled=await Promise.allSettled(group.map(src=>loadScript(src,5000)));
         settled.forEach((r,i)=>{if(r.status==='rejected'){errors.push(String(r.reason?.message||r.reason));console.warn('[NYX LOADER]',group[i],r.reason);}});
       };
-      // Group 1: modules that depend only on LIFE.
-      await loadGroup(EXTRAS.slice(0,4));
+      // Group 1: LIFE-dependent runtime modules, including NEXTRÉAL city control.
+      await loadGroup(EXTRAS.slice(0,5));
       // Group 2: voice/mobile benefit from Hybrid already being ready.
-      await loadGroup(EXTRAS.slice(4));
+      await loadGroup(EXTRAS.slice(5));
       window.dispatchEvent(new CustomEvent('nyxcore:extras-ready',{detail:{errors}}));
       return {errors};
     })();
